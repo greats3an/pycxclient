@@ -36,7 +36,7 @@ def RenewCaptcha(prompt=False,enhance=True) -> Union[type(Image),str]:
         # Deletes the old file
         if os.path.exists('captcha.jpg'):os.remove('captcha.jpg')
         captcha.save('captcha.jpg')
-        if 'termux' in ''.join(os.environ):
+        if 'termux' in str(os.environ):
             # Special compatibility fix for Termux,the android terminal emulator:
             # View image via termux-open,which will open the image 
             os.system('termux-open captcha.jpg')
