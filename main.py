@@ -29,10 +29,10 @@ def GetSchoolID():
 captcha = numericalcaptcha.RenewCaptcha(True,True)
 # User should login now
 result = login.UnitLogin(
+    settings['schoolid'] if settings['schoolid'] else GetSchoolID(),
     settings['username'] if settings['username'] else userio.get('输入您于该机构中的【学号 / 工号】'),
     settings['password'] if settings['password'] else userio.get('输入您的密码'),
-    captcha,
-    settings['schoolid'] if settings['schoolid'] else GetSchoolID()
+    captcha
 )
 
 if not 'url' in result.keys():
