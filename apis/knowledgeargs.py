@@ -5,15 +5,16 @@
 '''
 from . import session
 from json import loads
-import re
+import re,logging
 regex = r"(?<=mArg = ){.*(?=;)"
-def LoadKnowledgeArgs(cardurl):
+def LoadKnowledgeArgs(knowledgeUrl) -> dict:
     '''
         Returns a `dict` object contating infomations on its args
     '''
     response = session.get(
-        cardurl
+        knowledgeUrl
     )
+    logging.debug('Loading KnowledgeArgs (mArgs) of %s' % knowledgeUrl)
     mArgs = re.findall(regex,response.text)[0]
     mArgs = loads(mArgs)
     return mArgs

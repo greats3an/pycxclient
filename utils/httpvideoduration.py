@@ -11,7 +11,7 @@ from requests import Session
 blocksize = 2048
 # Content length in bytes at minium to contain MVHD info
 
-def GetHTTPVideoDuration(url, session: Session, headers={}, params={}):
+def GetHTTPVideoDuration(url, session: Session, headers={}, params={}) -> float:
     '''
     Gets a HTTP video's length via its ATOM header / footer
 
