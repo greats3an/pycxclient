@@ -7,7 +7,7 @@ PyCxClient
 '''
 from apis import numericalcaptcha, login, serachunits, studentcourses,courseclasses, knowledgeargs,objectstatus, multimedialog,documentpoint,session
 from utils import userio
-import logging,coloredlogs,sys,clipboard,os,json
+import logging,coloredlogs,sys,os,json
 coloredlogs.install(logging.DEBUG)
 # Selecting user's `unit`
 settings = {
