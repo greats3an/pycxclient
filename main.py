@@ -1,5 +1,5 @@
 '''
-PyCxHelper
+PyCxClient
 
     Python-based all in one Chaoxing learning helper,put to test
 
