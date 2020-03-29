@@ -4,7 +4,7 @@ echo 正在安装系统依赖
 pkg install -y git python clang libxml2 libiconv libxslt
 echo 克隆项目
 rm -rf pycxclient
-git clone https://github.com/greats3an/pycxclient
+git clone --recurse-submodules https://github.com/greats3an/pycxclient
 
 echo 正在安装 pip 依赖
 cd pycxclient
