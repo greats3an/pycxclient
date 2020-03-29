@@ -11,6 +11,7 @@ def SearchUnits(filter) -> list:
     '''
         Returns a `list` object containing nearest results to the filter given
     '''
+    logging.debug('Searching units related to %s' % filter)
     response = session.get(
         'https://passport2.chaoxing.com/org/searchUnis',
         params={
@@ -18,5 +19,4 @@ def SearchUnits(filter) -> list:
             'product':44
         }
     )
-    logging.debug('Searching units related to %s' % filter)
     return loads(response.text)

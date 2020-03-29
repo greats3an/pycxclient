@@ -23,11 +23,11 @@ def NormalLogin(username, password) -> dict:
         # The password is base-64 encoded
         't': 'true'
     }
+    logging.debug('Logging in with form-data %s' % data)    
     response = session.post(
         'https://passport2.chaoxing.com/fanyalogin',
         data=data
     )
-    logging.debug('Logging in with form-data %s' % data)
     return loads(response.text)
 
 
@@ -47,9 +47,10 @@ def UnitLogin(unit_code,username, password, captcha_code) -> dict:
         # The password is base-64 encoded
         't': 'true'
     }
+    logging.debug('Unit Logging in with form-data %s' % data)   
     response = session.post(
         'https://passport2.chaoxing.com/unitlogin',
         data=data
     )
-    logging.debug('Logging in with form-data %s' % data)
+
     return loads(response.text)

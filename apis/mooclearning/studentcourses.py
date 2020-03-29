@@ -12,10 +12,10 @@ def LoadCourses() -> list:
         Requires user to be logged in beforehand
         Loads all courses with `bs4`,retruns them in a `list` of `dict`
     '''
+    logging.debug('Loading all courses of user %s' % session.cookies.get('uname'))
     response = session.get(
         'http://mooc1-1.chaoxing.com/visit/interaction'
-    )
-    logging.debug('Loading all courses of user %s' % session.cookies.get('uname'))
+    )    
     soup = BeautifulSoup(response.text, 'lxml')
     courses_ul = soup.find_all('div', {'class': 'ulDiv'})[0].find_all('ul')[0]
     courses = []

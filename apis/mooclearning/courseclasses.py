@@ -12,10 +12,10 @@ def LoadClasses(course_url) -> dict:
         Requires user to be logged in beforehand
         Loads all tasks in courses with bs4
     '''
+    logging.debug('Loading all classes of course %s' % course_url)    
     response = session.get(
         course_url
     )
-    logging.debug('Loading all classes of course %s' % course_url)
     soup = BeautifulSoup(response.text, 'lxml')
     timeline = soup.find('div', {'class': 'timeline'})
     tasks = {}

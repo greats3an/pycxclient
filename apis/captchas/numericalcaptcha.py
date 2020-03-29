@@ -19,10 +19,10 @@ def RenewCaptcha(prompt=False) -> Union[bytearray,str]:
         
         if `prompt`:Returns the user inputed captcha code        
     '''
+    logging.debug('Renewing captcha')    
     response = session.get(
         'https://passport2.chaoxing.com/num/code'
     )    
-    logging.debug('Renewing captcha')
     # Prompts user to input the captcha
     captcha = response.content
     if prompt:

@@ -41,6 +41,7 @@ def MultimediaLog(reportUrl,playtime,duration,dtoken,clazzId,objectId,otherInfo,
     '''
         Log about your video watching duration
     '''
+    logging.debug('Logging MultimediaLog with played time of %s' % playtime)
     enc = _GenerateEnc(clazzId,jobid,objectId,playtime,duration,session.cookies.get('_uid'))
     response = session.get(
         reportUrl + '/' + dtoken,
@@ -59,5 +60,4 @@ def MultimediaLog(reportUrl,playtime,duration,dtoken,clazzId,objectId,otherInfo,
             'dtype':dtype
         }
     )
-    logging.debug('Logging MultimediaLog with played time of %s' % playtime)
     return response.text

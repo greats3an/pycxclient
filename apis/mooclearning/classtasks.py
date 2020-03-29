@@ -11,10 +11,10 @@ def LoadClassInfo(knowledgeUrl) -> dict:
     '''
         Returns a `dict` object contating infomations on its args
     '''
+    logging.debug('Loading KnowledgeArgs (mArgs) of %s' % knowledgeUrl)
     response = session.get(
         knowledgeUrl
     )
-    logging.debug('Loading KnowledgeArgs (mArgs) of %s' % knowledgeUrl)
     mArgs = re.findall(regex,response.text)[0]
     mArgs = loads(mArgs)
     return mArgs
