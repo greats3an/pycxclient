@@ -25,7 +25,7 @@ def perfomLogin(settings):
         unit = units['froms'][int(userio.get('输入您所处机构的【序号】'))]
         return unit['schoolid']
     
-    print('需要登录：')
+    print('【需要登录】')
     # User should login now
     result = login.UnitLogin(
         settings['schoolid'] if settings['schoolid'] else GetSchoolID(),
@@ -83,9 +83,8 @@ def selectTaskPoint(task):
     # returns the task's
     return {'attachment':attachment,'status':status}
 
-def getSupportedOperations(task,attachment,status):
+def getTaskSupportedOperations(task,attachment,status):
     '''Gets all supported operations for the certain task'''
-    def 退出():sys.exit()
     def 获取下载链接():
         return f"""
     直链：{status['download']}
@@ -113,7 +112,7 @@ def getSupportedOperations(task,attachment,status):
             task['defaults']['clazzId'],
             attachment['property']['objectid'],
             attachment['otherInfo'],
-            attachment['property']['jobid'],
+            attachment['property']['jobid'] if 'jobid' in attachment['property'].keys() else attachment['property']['_jobid'],
             isdrag= 0 if set_duration != str(status['duration']) else 4
         ) 
         return f'''
@@ -135,7 +134,7 @@ def getSupportedOperations(task,attachment,status):
     结果：{'设置成功' if result['status'] else '设置失败' }
     '''
     operations = {
-        '*':[退出,获取下载链接],
+        '*':[获取下载链接],
         'video':[获取封面,下载为MP3,设置观看时长],
         'document':[设置考核点]
     }
@@ -169,31 +168,23 @@ while True:
                 logging.debug(e)
                 break
                 # Go back to the parent loop if something wrong happens
-            print(f'[输入 {userio.cancel} 或 Crtl + C 以返回上一级]')
-            while True:
-                try:
-                    attachment,status = selectTaskPoint(task).values()
-                    availables = getSupportedOperations(task,attachment,status)
-                except Exception as e:
-                    logging.debug(e)
-                    break
-                    # Go back to the parent loop if something wrong happens
-                    print(f'[输入 {userio.cancel} 或 Crtl + C 以返回上一级]')
-                while True:
-                    try:
-                        '''
-                            Here begins the operation loop for the selected task point
-                        '''
-                        print(f"""
-                        任务点状态{'_' * 50}
-                            名称：{attachment['property']['name']}
-                            类型：{attachment['type']}
-                        通过状态：{['未通过','已通过'][status['isPassed']]}
-                        """)
-                        userio.listout(availables,foreach=lambda x: x.__name__,title='可用操作')
-                        operation = availables[int(userio.get('输入操作【序号】'))]
-                        print(operation())
-                        userio.get('执行完毕，按回车键',end='[继续]')                            
-                    except Exception as e:
-                        logging.debug(e)
-                        break
+            try:
+                attachment,status = selectTaskPoint(task).values()
+                availables = getTaskSupportedOperations(task,attachment,status)
+                # Go back to the parent loop if something wrong happens
+                '''
+                Here begins the operation for the selected task point
+                '''
+                print(f"""
+任务点状态{'_' * 50}
+    名称：{attachment['property']['name']}
+    类型：{attachment['type']}
+通过状态：{['未通过 / 未知','已通过'][status['isPassed']]}
+                """)
+                userio.listout(availables,foreach=lambda x: x.__name__,title='可用操作')
+                operation = availables[int(userio.get('输入操作【序号】'))]
+                print(operation())
+                userio.get('执行完毕，按回车键',end='[继续]')          
+            except Exception as e:
+                logging.debug(e)
+                break
