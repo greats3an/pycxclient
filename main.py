@@ -7,13 +7,18 @@ PyCxClient
 '''
 
 settings = {
-    'loginmethod': -1,
-    'username': '',
-    'password': '',
-    'schoolid': ''
+    'loginmethod': 1,
+    'username': '341021200410060012',
+    'password': '123745698sz',
+    'schoolid': '62459'
 }
 # Set-up these strings to login semi-automaticly (you still need to pass Captcha)
-
+mimic_settings = {
+    'step':20,
+    # In percentage * 100,the step of the mimic operation
+    'block':256
+    # The block size of a video request
+}
 import json
 import logging
 import os
@@ -21,11 +26,14 @@ import sys
 
 import coloredlogs
 
-from apis import behaviorlogging, captchas, general, mooclearning, registration
+from apis import session,behaviorlogging, captchas, general, mooclearning, registration
 from utils import userio
-
+from atom import streamedatom
 coloredlogs.install(logging.DEBUG)
 # Selecting user's `unit`
+
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+# turn off logs for urllib3 which is used by requests
 
 # region Sub Functions
 '''
@@ -147,25 +155,64 @@ def getTaskSupportedOperations(task, attachment, status):
     链接：{status['mp3']} (需要额外 Header 'referer':'https://mooc1-1.chaoxing.com/ananas/modules/video/index.html?v=2019-1113-1705')
     """
 
-    def 设置观看时长():
-        print('警告：更改操作只能【增加】时长，而不能【消减】时长')
-        print('      故该操作不可逆，请慎重使用')
+    def 设置观看时长(mimic_settings=mimic_settings):
+        step = mimic_settings['step']
+        block = mimic_settings['block']
+        
+        print('警告：1.更改操作只能【增加】时长，而不能【消减】时长')
+        print()
+        print('       故该操作不可逆，请慎重使用')
+        print()
+        print(f'      2.该操作将视频分为 {int(step / 100)} 份并同时对API和视频源(分块:{block} B)进行')
+        print()
+        print('        请求，且在大多数情况下表现安全，但**不保证**')
+        print()
+        print('        不会导致后台数据的遗产，所产生的后果将由阁下')
+        print()
+        print('        自行承担')
+        print()
         print('  注：需要刷新视频页面查看结果')
+        print()
         print('视频总时长（秒）：', status['duration'])
 
-        set_duration = userio.get('欲调节到的观看时长')
-        result = behaviorlogging.multimedialog.MultimediaLog(
-            task['defaults']['reportUrl'],
-            set_duration,
-            status['duration'],
-            status['dtoken'],
-            task['defaults']['clazzId'],
-            attachment['property']['objectid'],
-            attachment['otherInfo'],
-            attachment['property']['jobid'] if 'jobid' in attachment['property'].keys(
-            ) else attachment['property']['_jobid'],
-            isdrag=0 if set_duration != str(status['duration']) else 4
-        )
+        set_duration = int(userio.get('欲调节到的观看时长'))
+        percentage = set_duration / status['duration']
+
+
+
+        headers = {'referer': 'https://mooc1-1.chaoxing.com/ananas/modules/video/index.html?v=2019-1113-1705'}
+        # The header necessary to request the HTTP streamed (206) video source
+        print('观看时长、总时长比：%s ' % percentage)
+
+        def postLog(played_duration):
+            '''Posts a MultimediaLog'''
+            return behaviorlogging.multimedialog.MultimediaLog(
+                task['defaults']['reportUrl'],
+                int(played_duration),
+                status['duration'],
+                status['dtoken'],
+                task['defaults']['clazzId'],
+                attachment['property']['objectid'],
+                attachment['otherInfo'],
+                attachment['property']['jobid'] if 'jobid' in attachment['property'].keys(
+                ) else attachment['property']['_jobid'],
+                isdrag=0 if played_duration < int(status['duration']) else 4
+            )
+
+        for seek in range(0,100 + step,step):
+            # Mimic a normal watch routine
+            seek_precentage = seek / 100
+            # Precentage of the loop
+            seek_head = int(status['length'] * percentage * seek_precentage)
+            # Byte start posistion of the request           
+            played_duration = int(status['duration'] * percentage * seek_precentage)
+            # Time start posistion of the log
+            logging.debug('Stepping watch routine head: %s / %s (%s / 100)' % (seek_head,status['length'],seek))
+            # Loads the streaming video sources by chunks
+            streamedatom.PartialGet(status['http'],session,seek_head,block,headers=headers)
+            # Sends the request,fire and forget
+            result = postLog(played_duration)
+            # Does the logging
         return f'''
     返回值：{result}
     结果：{'播放已结束' if 'true' in result else '播放未结束' if 'false' in result else '修改失败'}

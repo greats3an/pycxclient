@@ -33,7 +33,7 @@ def _GenerateEnc(clazzId, jobid, objectId, currentTimeSec, totalTimeSec,uid='') 
         int(currentTimeSec) * 1000,
         _salt,
         int(totalTimeSec) * 1000,
-        '%s_%s' % (currentTimeSec,totalTimeSec)
+        '0_%s' % totalTimeSec
     )
     return _GenerateHash(enctext)
 
@@ -48,7 +48,7 @@ def MultimediaLog(reportUrl,playtime,duration,dtoken,clazzId,objectId,otherInfo,
             'clazzId':clazzId,
             'playingTime':playtime,
             'duration':duration,
-            'clipTime':'%s_%s' % (playtime,duration),
+            'clipTime':'0_%s' % duration,
             'objectId':objectId,
             'otherInfo':otherInfo,
             'jobid':jobid,
@@ -59,5 +59,5 @@ def MultimediaLog(reportUrl,playtime,duration,dtoken,clazzId,objectId,otherInfo,
             'dtype':dtype
         }
     )
-    logging.debug('Logging MultimediaLog with URL %s' % response.url)
+    logging.debug('Logging MultimediaLog with played time of %s' % playtime)
     return response.text
