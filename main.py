@@ -107,8 +107,8 @@ def selectClass(course):
 
 def selectTask(class_):
     '''We can finally do things on this praticlar task'''
-    userio.listout(class_, foreach=lambda x: x['title'], title='子课程列表')
-    task = class_[int(userio.get('输入子课程【序号】'))]
+    userio.listout(class_, foreach=lambda x: x['title'], title='任务列表')
+    task = class_[int(userio.get('输入任务【序号】'))]
     # Now we load the info of such sub task
     logging.debug('Loading task %s' % task['title'])
     task = mooclearning.classtasks.LoadClassInfo(task['knowledge_url'])
@@ -150,6 +150,7 @@ def getTaskSupportedOperations(task, attachment, status):
     def 设置观看时长():
         print('警告：更改操作只能【增加】时长，而不能【消减】时长')
         print('      故该操作不可逆，请慎重使用')
+        print('  注：需要刷新视频页面查看结果')
         print('视频总时长（秒）：', status['duration'])
 
         set_duration = userio.get('欲调节到的观看时长')
@@ -173,7 +174,7 @@ def getTaskSupportedOperations(task, attachment, status):
     def 设置考核点():
         print('警告： 该操作不可逆，请慎重使用')
         userio.get('按下回车键', end='[确定]')
-        result = mooclearning.documentpoint.SetDocumentPoint(
+        result = behaviorlogging.documentpoint.SetDocumentPoint(
             attachment['property']['jobid'] if 'jobid' in attachment['property'].keys(
             ) else attachment['property']['_jobid'],
             task['defaults']['knowledgeid'],
@@ -208,7 +209,7 @@ def splash():
 ╚═╝        ╚═╝    ╚═════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝   
                                            Python 实现的超星学习通多合一客户端                                        
 使用说明：                                              by greats3an@gmail.com
-    · 按 q 随时返回上一级
+    · 输入 q 返回上一级
     · 按下【回车】键登录                                                                               
 ''',end='')
 
@@ -245,7 +246,7 @@ def L(method):
             try:
                 method(*args, **kwargs)
             except Exception as e:
-                logging.debug(e)
+                logging.error(e)
                 break
     return wrapper
 
@@ -277,10 +278,10 @@ def 进入课堂列表():
 
                 AS = getTaskSupportedOperations(
                     task, taskpoint['attachment'], taskpoint['status'])
-                L(A(AS))()
+                print(A(AS)())
 
             AS = [进入任务点列表]
-            L(A(AS))(task)
+            A(AS)(task)
 
         AS = [进入任务列表]
         L(A(AS))(class_)
