@@ -1,16 +1,45 @@
 @echo off
-echo PyCxHelper Windows ä¾èµ–å®‰è£…è„šæœ¬
+echo PyCxHelper Windows ÒÀÀµ°²×°½Å±¾
+echo.
+if not exist atom/__init__.py goto incomplete
 if exist requirements.txt (
     python -V >nul
-    if %errorlevel% equ 0 (
-        echo å®‰è£…ä¾èµ–é¡¹
-        python -m pip install --user -U -r requirements.txt
+    if %errorlevel% equ 9009 (
+        goto nopython
     ) else (
-        echo æœªå®‰è£… Python
-        echo è¯·å‰å¾€ python.org ä¸‹è½½ 3.x ç‰ˆæœ¬
+		goto install
     )
 ) else (
-    echo æ–‡ä»¶ä¸å…¨ï¼šè¯·å°†æœ¬é¡¹ç›®å®Œå…¨ Clone 
-    echo æˆ–æ‰“åŒ…ä¸‹è½½åå®Œå…¨è§£å‹
+	goto incomplete
 )
+
+pause
+goto done
+
+:incomplete
+echo ÎÄ¼ş²»È«£ºÇë½«±¾ÏîÄ¿ÍêÈ« Clone:
+echo.
+echo (git clone --recursive https://github.com/greats3an/pycxclient)
+echo.
+echo »ò´ò°üÏÂÔØºóÍêÈ«½âÑ¹²¢Í¬Ê±ÏÂÔØ±¾ÏîÄ¿ËùÓĞµÄ submodule
+echo.
+echo Ïê¼û README.md
+echo.
+goto done
+
+:nopython
+echo Î´°²×° Python
+echo.
+echo ÇëÇ°Íù python.org ÏÂÔØ 3.x °æ±¾
+echo.
+goto done
+
+:install
+echo °²×°ÒÀÀµÏî...
+echo.
+python -m pip install --user -U -r requirements.txt
+goto done
+
+:done
+echo .
 pause
