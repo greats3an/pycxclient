@@ -163,7 +163,7 @@ def getTaskSupportedOperations(task, attachment, status):
         print()
         print('       故该操作不可逆，请慎重使用')
         print()
-        print(f'      2.该操作将视频分为 {int(step / 100)} 份并同时对API和视频源(分块:{block} B)进行')
+        print(f'      2.该操作将视频分为 {int(100 / step)} 份并同时对API和视频源(分块:{block} B)进行')
         print()
         print('        请求，且在大多数情况下表现安全，但**不保证**')
         print()
