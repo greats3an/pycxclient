@@ -115,7 +115,7 @@ def selectClass(course):
 
 def selectTask(class_):
     '''We can finally do things on this praticlar task'''
-    userio.listout(class_, foreach=lambda x: x['title'], title='任务列表')
+    userio.listout(class_, foreach=lambda x: x['chapter'] + ' ' + x['title'], title='任务列表')
     task = class_[int(userio.get('输入任务【序号】'))]
     # Now we load the info of such sub task
     logging.debug('Loading task %s' % task['title'])
@@ -178,10 +178,12 @@ def getTaskSupportedOperations(task, attachment, status):
         set_duration = int(userio.get('欲调节到的观看时长'))
         percentage = set_duration / status['duration']
 
-
+        
 
         headers = {'referer': 'https://mooc1-1.chaoxing.com/ananas/modules/video/index.html?v=2019-1113-1705'}
         # The header necessary to request the HTTP streamed (206) video source
+        content_length = int(streamedatom.GetHeaders(status['http'],session,headers=headers)['Content-Length'])
+
         print('观看时长、总时长比：%s ' % percentage)
 
         def postLog(played_duration):
@@ -196,21 +198,23 @@ def getTaskSupportedOperations(task, attachment, status):
                 attachment['otherInfo'],
                 attachment['property']['jobid'] if 'jobid' in attachment['property'].keys(
                 ) else attachment['property']['_jobid'],
-                isdrag=0 if played_duration < int(status['duration']) else 4
+                isdrag=0 if played_duration < int(status['duration']) * 0.5 else 4
+                # Minium playback 'pass' ratio
             )
 
         for seek in range(0,100 + step,step):
             # Mimic a normal watch routine
             seek_precentage = seek / 100
             # Precentage of the loop
-            seek_head = int(status['length'] * percentage * seek_precentage)
+            seek_head = int(content_length * percentage * seek_precentage)
             # Byte start posistion of the request           
             played_duration = int(status['duration'] * percentage * seek_precentage)
             # Time start posistion of the log
-            logging.debug('Stepping watch routine head: %s / %s (%s / 100)' % (seek_head,status['length'],seek))
+            logging.debug('Stepping watch routine head: %s / %s (%s / 100)' % (seek_head,content_length,seek))
             # Loads the streaming video sources by chunks
-            streamedatom.PartialGet(status['http'],session,seek_head,block,headers=headers)
-            # Sends the request,fire and forget
+            r = streamedatom.PartialGet(status['http'],session,seek_head,block,headers=headers)
+            logging.debug('Server returned code %s' % r.status_code)
+            # Sends the request
             result = postLog(played_duration)
             # Does the logging
         return f'''

@@ -23,7 +23,7 @@ def LoadClasses(course_url) -> dict:
         title = units.find('h2').text.replace(
             '\n', ' ').replace('\t', '').strip()
         tasks[title] = []
-        for subunits in units.find_all('div', {'class': 'leveltwo'}):
+        for subunits in units.select('div[class*="level"]'):
             chapter = subunits.find('span', {'class': 'chapterNumber'})
             article = subunits.find('span', {'class': 'articlename'})
             tasks[title].append({
