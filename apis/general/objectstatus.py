@@ -3,7 +3,7 @@
 
     Used to get a object's `status`
 '''
-from . import session
+from .. import session
 from json import loads
 import logging
 def GetObjectStatus(objectid) -> dict:

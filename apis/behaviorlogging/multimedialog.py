@@ -7,7 +7,7 @@
     
     ⚠️Once the view druation has increased,it CANNOT be decreased again
 '''
-from . import session
+from .. import session
 from hashlib import md5
 import logging
 _salt = "d_yHJ!$pdA~5"

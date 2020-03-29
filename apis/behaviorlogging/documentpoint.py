@@ -5,7 +5,7 @@
     
     ⚠️ which,once set,CANNOT be altered again
 '''
-from . import session
+from .. import session
 from json import loads
 import logging
 def SetDocumentPoint(jobid,knowledgeid,courseid,clazzid,jtoken) -> dict:

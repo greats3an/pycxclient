@@ -3,7 +3,7 @@
 
     Gets the students' courses from the staticly generated webpage
 '''
-from . import session
+from .. import session
 from bs4 import BeautifulSoup
 import logging
 

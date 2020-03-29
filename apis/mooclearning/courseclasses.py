@@ -3,7 +3,7 @@
 
     Gets all classes with in the course
 '''
-from . import session
+from .. import session
 from bs4 import BeautifulSoup
 import logging
 

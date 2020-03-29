@@ -3,7 +3,7 @@
 
     Serach units via filter given
 '''
-from . import session
+from .. import session
 from base64 import b64encode
 from json import loads
 import logging

@@ -26,7 +26,7 @@ def scrlen(s):
 
 def listout(items,foreach=lambda x: x,title='LIST'):
     '''Prints a list of dictionaries with their index and value processed by `foreach`'''
-    print(title,'_' * (50 - scrlen(title)))
+    print(title,'_' * (50 - scrlen(title)),sep='')
     items = list(items)
     for index in range(0,len(items)):
         item = items[index]

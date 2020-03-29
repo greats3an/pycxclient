@@ -3,7 +3,7 @@
 
     Used to get a `KnowledgeCard`'s args which contains the `tasks` info via its url
 '''
-from . import session
+from .. import session
 from json import loads
 import re,logging
 regex = r"(?<=mArg = ){.*(?=;)"
