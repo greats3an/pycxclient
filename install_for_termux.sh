@@ -11,3 +11,4 @@ cd pycxclient
 python -m pip install --user -U -r requirements.txt
 
 echo 安装完毕
+echo 您可以运行 python pycxclient/main.py 了
