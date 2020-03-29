@@ -123,7 +123,7 @@ def getTaskSupportedOperations(task,attachment,status):
         print('警告： 该操作不可逆，请慎重使用')
         userio.get('按下回车键',end='[确定]')
         result = documentpoint.SetDocumentPoint(
-            attachment['property']['jobid'],
+            attachment['property']['jobid'] if 'jobid' in attachment['property'].keys() else attachment['property']['_jobid'],
             task['defaults']['knowledgeid'],
             task['defaults']['courseid'],
             task['defaults']['clazzId'],
@@ -131,14 +131,14 @@ def getTaskSupportedOperations(task,attachment,status):
         )
         return f'''
     信息：{result["msg"]}
-    结果：{'设置成功' if result['status'] else '设置失败' }
+    结果：{'设置成功' if result['status'] else '设置失败（该项目可能不属于考核点）' }
     '''
     operations = {
         '*':[获取下载链接],
         'video':[获取封面,下载为MP3,设置观看时长],
         'document':[设置考核点]
     }
-    return operations['*'] + operations[attachment['type']]
+    return operations['*'] + operations[attachment['type']] if attachment['type'] in operations.keys() else []
 
 # First,perform login
 perfomLogin(settings)
