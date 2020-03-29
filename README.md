@@ -1,6 +1,19 @@
 # pycxclient
 Python 实现的超星网课客户端
 
+# 安装依赖
+**Windows**:
+1. 安装 [Python](https://www.python.org/ "Python") 3.x 版本
+2. 运行 `install_for_windows.cmd`
+
+**Termux**:
+	
+	bash <(curl -s https://raw.githubusercontent.com/greats3an/pycxclient/master/install_for_termux.sh)
+
+**其他系统**
+	
+	python -m pip install --user -U -r requirements.txt
+
 # 使用
 	python main.py
 
