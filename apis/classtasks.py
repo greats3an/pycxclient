@@ -1,13 +1,13 @@
 '''
-# KnowledgeArgs Module
+# ClassTasks Module
 
-    Used to get a `KnowledgeCard`'s args via its url
+    Used to get a `KnowledgeCard`'s args which contains the `tasks` info via its url
 '''
 from . import session
 from json import loads
 import re,logging
 regex = r"(?<=mArg = ){.*(?=;)"
-def LoadKnowledgeArgs(knowledgeUrl) -> dict:
+def LoadClassInfo(knowledgeUrl) -> dict:
     '''
         Returns a `dict` object contating infomations on its args
     '''

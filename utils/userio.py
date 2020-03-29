@@ -3,11 +3,23 @@
 
     provides some handy functions for command line interfacing
 '''
-import unicodedata
+import unicodedata,logging
+cancel = 'q'
+
+class UserCannceledException(Exception):
+    def __init__(self, *args, **kwargs):
+        logging.debug('Intercepted user canncel action')
+        super().__init__(*args, **kwargs)
+
 def get(*args,**kwargs):
-    '''Input but wrapped with print()'''    
+    '''Input but wrapped with print() and added interruptions''' 
     print(*args,**{'end':'>>>',**kwargs})
-    return input()
+    try:
+        result = input()
+    except KeyboardInterrupt:
+        result = cancel
+    if result == cancel:raise UserCannceledException('Cannceled.')
+    return result
 
 def scrlen(s):
     return sum([2 if unicodedata.east_asian_width(i) in 'WFA' else 1 for i in s])
