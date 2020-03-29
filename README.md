@@ -1,6 +1,10 @@
 # pycxclient
 Python 实现的超星网课客户端
 
+# Submodules
+[greats3an/atom](https://github.com/greats3an/atom)
+若您以ZIP形式下载，请务必也将该项目下载后的`atom-master`内文件解压到本项目的`atom`文件夹
+
 # 安装依赖
 **Windows**:
 1. 安装 [Python](https://www.python.org/ "Python") 3.x 版本
