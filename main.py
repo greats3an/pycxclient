@@ -33,7 +33,7 @@ def perfomLogin(settings):
         settings['password'] if settings['password'] else userio.get('输入您的密码'),
         # Prompt the user to input the captcha code
         # Renewing captcha,which will also give us a new JSESSIONID
-        numericalcaptcha.RenewCaptcha(True,True)
+        numericalcaptcha.RenewCaptcha(True)
     )
 
     if not 'url' in result.keys():
