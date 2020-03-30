@@ -176,7 +176,7 @@ def getTaskSupportedOperations(task, attachment, status):
         print()
         print('        请求，且在大多数情况下表现安全，但**不保证**')
         print()
-        print('        不会导致后台数据的遗产，所产生的后果将由阁下')
+        print('        不会导致后台数据的异常，所产生的后果将由阁下')
         print()
         print('        自行承担')
         print()
