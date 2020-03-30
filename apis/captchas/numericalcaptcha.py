@@ -6,7 +6,7 @@
     for logging in,and etc
 '''
 from .. import session
-from utils import userio
+from utils import userio,showfile
 from typing import Union
 import os,logging
 logger = logging.getLogger('NumericalCaptcha')
@@ -30,18 +30,7 @@ def RenewCaptcha(prompt=False) -> Union[bytearray,str]:
         logger.debug('Prompting user to input captcha')
         userio.get('即将输入验证码，请记下您所看到的四位有效数字；按下回车查看验证码:',end='[确认]')
         # Deletes the old file
-        if os.path.exists('captcha.jpg'):os.remove('captcha.jpg')
-        open('captcha.jpg','wb').write(captcha)
-        if 'termux' in str(os.environ):
-            # Special compatibility fix for Termux,the android terminal emulator:
-            # View image via termux-open,which will open the image 
-            os.system('termux-open captcha.jpg')
-        else:
-            # For other terminals,which in most cases can directly view such image
-            # Using their own image viewer
-            os.startfile('captcha.jpg')
-        captcha = userio.get('输入您所看到的验证码')
-        # Deletes the file afterwards
-        os.remove('captcha.jpg')
+        showfile.ShowBytes(captcha,ext='jpg')
+        captcha = userio.get('输入验证码')
     return captcha
 

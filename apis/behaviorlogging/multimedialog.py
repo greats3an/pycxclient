@@ -5,7 +5,7 @@
 
     which will log about your media watching behavior
     
-    ⚠️Once the view druation has increased,it CANNOT be decreased again
+    Once the view druation has increased,it CANNOT be decreased again
 '''
 from .. import session
 from hashlib import md5

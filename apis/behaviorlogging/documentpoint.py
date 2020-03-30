@@ -3,7 +3,7 @@
 
     Used to register 'progress' of a document
     
-    ⚠️ which,once set,CANNOT be altered again
+    which,once set,CANNOT be altered again
 '''
 from .. import session
 from json import loads

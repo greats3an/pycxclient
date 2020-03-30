@@ -5,17 +5,18 @@
 '''
 from .. import session
 from json import loads
-import re,logging
+from utils import js2dict
+import logging
 logger = logging.getLogger('ClassTasks')
-regex = r"(?<=mArg = ){.*(?=;)"
+
 def LoadClassInfo(knowledgeUrl) -> dict:
     '''
         Returns a `dict` object contating infomations on its args
     '''
-    logger.debug('Loading KnowledgeArgs (mArgs) of %s' % knowledgeUrl)
+    logger.debug('Loading KnowledgeArgs (mArg) of %s' % knowledgeUrl)
     response = session.get(
         knowledgeUrl
     )
-    mArgs = re.findall(regex,response.text)[0]
-    mArgs = loads(mArgs)
-    return mArgs
+    mArg = js2dict.js2dict(response.text)
+    mArg = mArg['mArg']
+    return loads(mArg)
