@@ -33,8 +33,10 @@ coloredlogs.install(logging.DEBUG)
 # Selecting user's `unit`
 
 logging.getLogger("urllib3").setLevel(logging.WARNING)
-# turn off logs for urllib3 which is used by requests
+# turn up logs levels for urllib3 which is used by requests
 logger = logging.getLogger('main')
+# local logger
+
 # region Sub Functions
 '''
     Sub functions bulit on `apis` module
@@ -159,6 +161,13 @@ def getTaskSupportedOperations(task, attachment, status):
         step = mimic_settings['step']
         block = mimic_settings['block']
         
+        headers = {'referer': 'https://mooc1-1.chaoxing.com/ananas/modules/video/index.html?v=2019-1113-1705'}
+        # The header necessary to request the HTTP streamed (206) video source
+        header = streamedatom.GetHTTPVideoHeader(status['http'],session,headers=headers)
+        
+        content_length = int(header['http']['Content-Length'])
+        duration = int(header['atom'].ATOM_DURATION_SEC)
+
         print('警告：1.更改操作只能【增加】时长，而不能【消减】时长')
         print()
         print('       故该操作不可逆，请慎重使用')
@@ -173,16 +182,12 @@ def getTaskSupportedOperations(task, attachment, status):
         print()
         print('  注：需要刷新视频页面查看结果')
         print()
-        print('视频总时长（秒）：', status['duration'])
+        print('视频总时长（秒）：', duration)
 
         set_duration = int(userio.get('欲调节到的观看时长'))
-        percentage = set_duration / status['duration']
+        percentage = set_duration / duration
 
-        
 
-        headers = {'referer': 'https://mooc1-1.chaoxing.com/ananas/modules/video/index.html?v=2019-1113-1705'}
-        # The header necessary to request the HTTP streamed (206) video source
-        content_length = int(streamedatom.GetHeaders(status['http'],session,headers=headers)['Content-Length'])
 
         print('观看时长、总时长比：%s ' % percentage)
 
@@ -191,14 +196,14 @@ def getTaskSupportedOperations(task, attachment, status):
             return behaviorlogging.multimedialog.MultimediaLog(
                 task['defaults']['reportUrl'],
                 int(played_duration),
-                status['duration'],
+                duration,
                 status['dtoken'],
                 task['defaults']['clazzId'],
                 attachment['property']['objectid'],
                 attachment['otherInfo'],
                 attachment['property']['jobid'] if 'jobid' in attachment['property'].keys(
                 ) else attachment['property']['_jobid'],
-                isdrag=0 if played_duration < int(status['duration']) * 0.5 else 4
+                isdrag=0 if played_duration < int(duration) * 0.5 else 4
                 # Minium playback 'pass' ratio
             )
 
@@ -208,7 +213,7 @@ def getTaskSupportedOperations(task, attachment, status):
             # Precentage of the loop
             seek_head = int(content_length * percentage * seek_precentage)
             # Byte start posistion of the request           
-            played_duration = int(status['duration'] * percentage * seek_precentage)
+            played_duration = int(duration * percentage * seek_precentage)
             # Time start posistion of the log
             logger.debug('Stepping watch routine head: %s / %s (%s / 100)' % (seek_head,content_length,seek))
             # Loads the streaming video sources by chunks
