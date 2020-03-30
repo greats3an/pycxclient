@@ -9,6 +9,7 @@ from .. import session
 from utils import userio
 from typing import Union
 import os,logging
+logger = logging.getLogger('NumericalCaptcha')
 def RenewCaptcha(prompt=False) -> Union[bytearray,str]:
     '''
         Renews captcha
@@ -19,14 +20,14 @@ def RenewCaptcha(prompt=False) -> Union[bytearray,str]:
         
         if `prompt`:Returns the user inputed captcha code        
     '''
-    logging.debug('Renewing captcha')    
+    logger.debug('Renewing captcha')    
     response = session.get(
         'https://passport2.chaoxing.com/num/code'
     )    
     # Prompts user to input the captcha
     captcha = response.content
     if prompt:
-        logging.debug('Prompting user to input captcha')
+        logger.debug('Prompting user to input captcha')
         userio.get('即将输入验证码，请记下您所看到的四位有效数字；按下回车查看验证码:',end='[确认]')
         # Deletes the old file
         if os.path.exists('captcha.jpg'):os.remove('captcha.jpg')

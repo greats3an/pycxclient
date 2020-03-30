@@ -12,7 +12,7 @@ from hashlib import md5
 import logging
 _salt = "d_yHJ!$pdA~5"
 _format = "[{0}][{1}][{2}][{3}][{4}][{5}][{6}][{7}]"
-
+logger = logging.getLogger('MultimediaLog')
 def _GenerateHash(text) -> str:
     '''
         Returns MD5 hash of the text encoded
@@ -41,7 +41,7 @@ def MultimediaLog(reportUrl,playtime,duration,dtoken,clazzId,objectId,otherInfo,
     '''
         Log about your video watching duration
     '''
-    logging.debug('Logging MultimediaLog with played time of %s (drag=%s)' % (playtime,isdrag))
+    logger.debug('Logging MultimediaLog with played time of %s (drag=%s)' % (playtime,isdrag))
     enc = _GenerateEnc(clazzId,jobid,objectId,playtime,duration,session.cookies.get('_uid'))
     response = session.get(
         reportUrl + '/' + dtoken,

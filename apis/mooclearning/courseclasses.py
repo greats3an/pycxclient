@@ -6,13 +6,13 @@
 from .. import session
 from bs4 import BeautifulSoup
 import logging
-
+logger = logging.getLogger('CourseClasses')
 def LoadClasses(course_url) -> dict:
     '''
         Requires user to be logged in beforehand
         Loads all tasks in courses with bs4
     '''
-    logging.debug('Loading all classes of course %s' % course_url)    
+    logger.debug('Loading all classes of course %s' % course_url)    
     response = session.get(
         course_url
     )

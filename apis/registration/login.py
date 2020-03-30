@@ -7,7 +7,7 @@ from .. import session
 from base64 import b64encode
 from json import loads
 import logging
-
+logger = logging.getLogger('Login')
 def NormalLogin(username, password) -> dict:
     '''
         This method DOES NOT require capthca verification
@@ -23,7 +23,7 @@ def NormalLogin(username, password) -> dict:
         # The password is base-64 encoded
         't': 'true'
     }
-    logging.debug('Logging in with form-data %s' % data)    
+    logger.debug('Logging in with form-data %s' % data)    
     response = session.post(
         'https://passport2.chaoxing.com/fanyalogin',
         data=data
@@ -47,7 +47,7 @@ def UnitLogin(unit_code,username, password, captcha_code) -> dict:
         # The password is base-64 encoded
         't': 'true'
     }
-    logging.debug('Unit Logging in with form-data %s' % data)   
+    logger.debug('Unit Logging in with form-data %s' % data)   
     response = session.post(
         'https://passport2.chaoxing.com/unitlogin',
         data=data

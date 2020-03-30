@@ -6,13 +6,13 @@
 from .. import session
 from bs4 import BeautifulSoup
 import logging
-
+logger = logging.getLogger('StudentCourses')
 def LoadCourses() -> list:
     '''
         Requires user to be logged in beforehand
         Loads all courses with `bs4`,retruns them in a `list` of `dict`
     '''
-    logging.debug('Loading all courses of user %s' % session.cookies.get('uname'))
+    logger.debug('Loading all courses of user %s' % session.cookies.get('uname'))
     response = session.get(
         'http://mooc1-1.chaoxing.com/visit/interaction'
     )    

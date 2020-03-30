@@ -5,10 +5,10 @@
 '''
 import unicodedata,logging
 cancel = 'q'
-
+logger = logging.getLogger('UserIO')
 class UserCannceledException(Exception):
     def __init__(self, *args, **kwargs):
-        logging.debug('Intercepted user canncel action')
+        logger.warn('Intercepted user canncel action')
         super().__init__(*args, **kwargs)
 
 def get(*args,**kwargs):

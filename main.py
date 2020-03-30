@@ -34,7 +34,7 @@ coloredlogs.install(logging.DEBUG)
 
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 # turn off logs for urllib3 which is used by requests
-
+logger = logging.getLogger('main')
 # region Sub Functions
 '''
     Sub functions bulit on `apis` module
@@ -50,12 +50,12 @@ def 账号密码登录(settings):
     )
 
     if not 'url' in result.keys():
-        logging.fatal('Failed to login:%s' %
+        logger.fatal('Failed to login:%s' %
                       result['mes'] if 'mes' in result.keys() else '原因未知')
         userio.get('按任意键', end='退出')
         sys.exit()
     # We have logged in,now,list all the courses the user has
-    logging.info('User logged in')
+    logger.info('User logged in')
     return result
 
 
@@ -83,12 +83,12 @@ def 单位登录(settings):
     )
 
     if not 'url' in result.keys():
-        logging.fatal('Failed to login:%s' %
+        logger.fatal('Failed to login:%s' %
                       result['mes'] if 'mes' in result.keys() else '原因未知')
         userio.get('按任意键', end='退出')
         sys.exit()
     # We have logged in,now,list all the courses the user has
-    logging.info('User logged in')
+    logger.info('User logged in')
     return result
 
 
@@ -104,7 +104,7 @@ def selectCourse():
 
 def selectClass(course):
     '''Then,user picks one task from the course,this function returns it'''
-    logging.debug('Loading course %s' % course['title'])
+    logger.debug('Loading course %s' % course['title'])
     classes = mooclearning.courseclasses.LoadClasses(course['url'])
     # User can now select one of the classes to start 'learning'
     userio.listout(classes.keys(), title='课程列表')
@@ -118,7 +118,7 @@ def selectTask(class_):
     userio.listout(class_, foreach=lambda x: x['chapter'] + ' ' + x['title'], title='任务列表')
     task = class_[int(userio.get('输入任务【序号】'))]
     # Now we load the info of such sub task
-    logging.debug('Loading task %s' % task['title'])
+    logger.debug('Loading task %s' % task['title'])
     task = mooclearning.classtasks.LoadClassInfo(task['knowledge_url'])
     # returns the task selected
     return task
@@ -210,13 +210,13 @@ def getTaskSupportedOperations(task, attachment, status):
             # Byte start posistion of the request           
             played_duration = int(status['duration'] * percentage * seek_precentage)
             # Time start posistion of the log
-            logging.debug('Stepping watch routine head: %s / %s (%s / 100)' % (seek_head,content_length,seek))
+            logger.debug('Stepping watch routine head: %s / %s (%s / 100)' % (seek_head,content_length,seek))
             # Loads the streaming video sources by chunks
             r = streamedatom.PartialGet(status['http'],session,seek_head,block,headers=headers)
-            logging.debug('Server returned code %s' % r.status_code)
+            logger.debug('Server returned code %s' % r.status_code)
             # Sends the request
             result = postLog(played_duration)
-            # Does the logging
+            # Does the logger
         return f'''
     返回值：{result}
     结果：{'播放已结束' if 'true' in result else '播放未结束' if 'false' in result else '修改失败'}
@@ -297,7 +297,7 @@ def L(method):
             try:
                 method(*args, **kwargs)
             except Exception as e:
-                logging.error(e)
+                logger.error(e)
                 break
     return wrapper
 

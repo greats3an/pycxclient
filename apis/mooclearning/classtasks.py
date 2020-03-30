@@ -6,12 +6,13 @@
 from .. import session
 from json import loads
 import re,logging
+logger = logging.getLogger('ClassTasks')
 regex = r"(?<=mArg = ){.*(?=;)"
 def LoadClassInfo(knowledgeUrl) -> dict:
     '''
         Returns a `dict` object contating infomations on its args
     '''
-    logging.debug('Loading KnowledgeArgs (mArgs) of %s' % knowledgeUrl)
+    logger.debug('Loading KnowledgeArgs (mArgs) of %s' % knowledgeUrl)
     response = session.get(
         knowledgeUrl
     )
