@@ -20,6 +20,6 @@ def PickInfo(pick_url) -> dict:
     response = session.get(
         pick_url
     ) 
-    result = js2dict.js2dict(response.text)['userChoose'][5:-1]
+    result = js2dict.js2dict(response.text)['userChoose'][0][5:-1]
     result = json.loads(result.replace("'",'"'))
     return result

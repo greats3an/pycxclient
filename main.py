@@ -7,10 +7,10 @@ PyCxClient
 '''
 
 settings = {
-    'loginmethod': 1,
-    'username': '341021200410060012',
-    'password': '123745698sz',
-    'schoolid': '62459'
+    'loginmethod': -1,
+    'username': '',
+    'password': '',
+    'schoolid': ''
 }
 # Set-up these strings to login semi-automaticly (you still need to pass Captcha)
 mimic_settings = {
@@ -28,7 +28,8 @@ import coloredlogs
 
 from apis import session,behaviorlogging, captchas, general, mooclearning, registration,activities
 from utils import userio
-from atom import streamedatom
+from utils.showfile import showfile
+from utils.atom import streamedatom
 coloredlogs.install(logging.DEBUG)
 # Selecting user's `unit`
 
@@ -68,7 +69,7 @@ def 单位登录(settings):
         units = registration.serachunits.SearchUnits(
             userio.get('请输入您所在机构的名称进行模糊搜索（如：XX中学）'))
         userio.listout(
-            units['froms'], foreach=lambda item: item['name'], title='机构列表')
+            units['froms'], foreach=lambda x,i: x['name'], title='机构列表')
         unit = units['froms'][int(userio.get('输入您所处机构的【序号】'))]
         return unit['schoolid']
 
@@ -115,7 +116,7 @@ def init():
     # First,perform login
     methods = [账号密码登录, 单位登录]
     if not 'loginmethod' in list(settings.keys()) or settings['loginmethod'] == -1:
-        userio.listout(methods, foreach=lambda x: x.__name__, title='选择登录途径')
+        userio.listout(methods, foreach=lambda x,i: x.__name__, title='选择登录途径')
         method = methods[int(userio.get('输入登录方法【序号】',end='>>>'))]
         # Then we enter the main loop
     else:
@@ -150,7 +151,7 @@ def L(method):
 
 def A(actions):
     '''`A:Action`,prompts user to select a action of choice'''
-    userio.listout(actions, foreach=lambda x: x.__name__, title='可用操作')
+    userio.listout(actions, foreach=lambda x,i: x.__name__, title='可用操作')
     action = actions[int(userio.get('输入操作【序号】'))]
     return action
 
@@ -160,7 +161,7 @@ def 课堂列表():
         '''User will pick one courses from the list,this funtions returns the one selected'''
         courses = mooclearning.studentcourses.LoadCourses()
         userio.listout(
-            courses, foreach=lambda item: item["title"] + ' (' + item["description"][0] + ')', title='课堂列表')
+            courses, foreach=lambda x,i: x["title"] + ' (' + x["description"][0] + ')', title='课堂列表')
         course = courses[int(userio.get('输入课堂【序号】'))]
         # Now the user should choose one of those courses
         return course    
@@ -181,7 +182,7 @@ def 课堂列表():
         def 任务列表(class_):
             def _select(class_):
                 '''We can finally do things on this praticlar task'''
-                userio.listout(class_, foreach=lambda x: x['chapter'] + ' ' + x['title'], title='任务列表')
+                userio.listout(class_, foreach=lambda x,i: x['chapter'] + ' ' + x['title'], title='任务列表')
                 task = class_[int(userio.get('输入任务【序号】'))]
                 # Now we load the info of such sub task
                 logger.debug('Loading task %s' % task['title'])
@@ -194,7 +195,7 @@ def 课堂列表():
                 def _select(task):
                     '''User will now select a task point of choice'''
                     userio.listout(task['attachments'],
-                                foreach=lambda x: x['property']['name'], title='任务点')
+                                foreach=lambda x,i: x['property']['name'], title='任务点')
                     attachment = task['attachments'][int(userio.get('输入任务点【序号】'))]
                     status = {
                         **general.objectstatus.GetObjectStatus(attachment['property']['objectid']),
@@ -333,7 +334,7 @@ def 课堂列表():
     def 活动列表(course):
         def _select(activitylist):
             '''User will now choose one of the activites'''
-            userio.listout(activitylist,foreach=lambda x:'[%s] [%s] %s %s' %(['进行中','已结束'][x['activity_ended']],x['activity_type_str'],x['activity_description'],x['activity_alert']),title='活动列表')
+            userio.listout(activitylist,foreach=lambda x,i:'[%s] [%s] %s %s' %(['进行中','已结束'][x['activity_ended']],x['activity_type_str'],x['activity_description'],x['activity_alert']),title='活动列表')
             return activitylist[int(userio.get('输入序号'))]
 
         activitylist = activities.courseactivites.GetCourseActivites(course['url'])
@@ -352,19 +353,38 @@ def 课堂列表():
             result = activities.pick.PickInfo(activity['url'])
             userio.listout(
                 result,
-                foreach=lambda x:f"{x['name']} {('（我）' if str(x['uid']) == str(session.cookies.get('_uid')) else '......')} {x['updatetimeStr']}",
+                foreach=lambda x,i:f"{x['name']} {('（我）' if str(x['uid']) == str(session.cookies.get('_uid')) else '......')} {x['updatetimeStr']}",
                 title='被选到的人')
-            userio.get('按回车键')
+            userio.get('按回车键',ignore_cancel=True)
             return ''
+
+        def 查看评分信息():
+            result = activities.rating.RateDetail(activity['url'])
+            print(f"    标题：  {result['rate_info']['title']}")
+            print(f"其他信息：  {result['rate_info']['deploy_info']}")
+            userio.listout(result['rate_survey'],lambda x,i:f"{x['sender']} | {x['score']} | {x['message']}",'调研信息')
+            userio.listout(result['rate_imgs'],lambda x,i:f'图片 {i}','内容')
+            try:
+                url = result['rate_imgs'][int(userio.get('输入预览序号'))]
+                showfile.ShowPath(url,ext='jpg',lifetime=10)
+            except Exception:
+                pass
+            return ''            
+
+        def 评分():
+            content = userio.get('评分内容')
+            score = userio.get('评分分数')
+            result = activities.rating.Rate(activity['url'],content,score)
+            return f"   结果：{result['msg'] if result['msg'] else '成功'}"
 
         def _enumerate(activity_type):
             operations = {
                 '*':[],
                 '2':[签到],
-                '11':[查看选人情况]
+                '11':[查看选人情况],
+                '23':[查看评分信息,评分]
             }
-            
-            return operations['*'] + operations[str(activity_type)] if str(activity_type) in operations.keys() else []
+            return  operations['*'] + operations[str(activity_type)] if str(activity_type) in operations.keys() else []
         
         print(A(_enumerate(activity['activity_type']))())
 
@@ -380,8 +400,15 @@ def entryPoint():
 
 # endregion
 
+# region End
+def end():
+    session.close()
+    userio.get('按任意键退出')
+# endregion
+
 if __name__ == "__main__":
     # Enters entery point once startup
     splash()
     init()
     L(entryPoint)()
+    end()

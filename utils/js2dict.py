@@ -3,13 +3,16 @@
 
     Turns js varaibles into dictionaries
 '''
-import re,json
-regex = r"(?:var|^)([^=!\n]*)(?:=)([^=].*)"
+import re,json,clipboard
+regex = r"(?:var|^|)([ a-zA-Z0-9]*)(?:=)([^;$)]*)(?:;|$)"
 
 def js2dict(js):
+    clipboard.copy(js)
     result = {}
     for matches in re.finditer(regex,js):
         key,value = matches.groups()
         key,value=key.strip(),value.strip()
-        result[key] = value[:-1] if value[-1:] == ';' else value
+        value = value[:-1] if value[-1:] == ';' else value
+        if key in result.keys():result[key].append(value)
+        else:result[key] = [value]
     return result

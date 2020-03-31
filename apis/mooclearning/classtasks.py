@@ -18,5 +18,5 @@ def LoadClassInfo(knowledgeUrl) -> dict:
         knowledgeUrl
     )
     mArg = js2dict.js2dict(response.text)
-    mArg = mArg['mArg']
+    mArg = mArg['mArg'][0]
     return loads(mArg)
