@@ -5,7 +5,7 @@
 '''
 from .. import session
 from json import loads
-from utils import js2dict
+from utils.myutils import js2dict
 import logging
 logger = logging.getLogger('ClassTasks')
 

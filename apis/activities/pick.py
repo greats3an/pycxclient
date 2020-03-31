@@ -7,7 +7,7 @@
 
 '''
 from .. import session
-from utils import urlparams,js2dict
+from utils.myutils import urlparams,js2dict
 import logging,json
 logger = logging.getLogger('Pick')
 

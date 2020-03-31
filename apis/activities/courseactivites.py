@@ -6,7 +6,7 @@
     which,once set,CANNOT be altered again
 '''
 from .. import session
-from utils import urlparams
+from utils.myutils import urlparams
 from bs4 import BeautifulSoup
 import logging
 import re

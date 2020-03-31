@@ -28,7 +28,7 @@ import time
 import coloredlogs
 
 from apis import session,behaviorlogging, captchas, general, mooclearning, registration,activities,notification
-from utils import userio
+from utils.myutils import userio
 from utils.showfile import showfile
 from utils.atom import streamedatom
 coloredlogs.install(logging.DEBUG)

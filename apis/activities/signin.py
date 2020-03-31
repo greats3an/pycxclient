@@ -7,7 +7,7 @@
 '''
 from .. import session
 from bs4 import BeautifulSoup
-from utils import urlparams
+from utils.myutils import urlparams
 import logging
 logger = logging.getLogger('Singin')
 def NormalSingin(singin_url) -> str:
