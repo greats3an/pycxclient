@@ -1,11 +1,6 @@
 # pycxclient
 Python 实现的超星网课客户端
 
-# Submodules
-[greats3an/atom](https://github.com/greats3an/atom)
-
-若您以ZIP形式下载，请务必也将该项目下载后的`atom-master`内文件解压到本项目的`atom`文件夹
-
 # 安装依赖
 **Windows**:
 1. 安装 [Python](https://www.python.org/ "Python") 3.x 版本
@@ -34,14 +29,15 @@ Python 实现的超星网课客户端
 - 文档项目
 - - 一键设置考核点（任务点）
 - 活动
-- - 签到（手势、普通）
+- - 签到（手势、普通签到）
 - - 评分（预览、进行评分）
 - - 选人（查看详情）
+- 通知
+- - 获取所有通知
+- - 定期拉取新通知
 
 # TODO
-- 实现通知拉取
 - 实现 PM 推拉
-- 签到功能
 - 弄个 GUI ？
 - 集成下载逻辑 （Aria2 ?）
 - 自动识别 Captcha （Tesseract ？）

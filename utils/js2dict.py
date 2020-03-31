@@ -3,11 +3,10 @@
 
     Turns js varaibles into dictionaries
 '''
-import re,json,clipboard
+import re,json
 regex = r"(?:var|^|)([ a-zA-Z0-9]*)(?:=)([^;$)]*)(?:;|$)"
 
 def js2dict(js):
-    clipboard.copy(js)
     result = {}
     for matches in re.finditer(regex,js):
         key,value = matches.groups()

@@ -23,21 +23,21 @@ import json
 import logging
 import os
 import sys
-
+import threading
+import time
 import coloredlogs
 
-from apis import session,behaviorlogging, captchas, general, mooclearning, registration,activities
+from apis import session,behaviorlogging, captchas, general, mooclearning, registration,activities,notification
 from utils import userio
 from utils.showfile import showfile
 from utils.atom import streamedatom
 coloredlogs.install(logging.DEBUG)
 # Selecting user's `unit`
 
-# logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 # turn up logs levels for urllib3 which is used by requests
 logger = logging.getLogger('main')
 # local logger
-
 # region Init
 '''
     Login sequence
@@ -98,7 +98,7 @@ def 单位登录(settings):
     Work before loop
 '''
 def splash():
-    userio.get('''
+    userio.get(f'''
 ________        _________      __________________            _____ 
 ___  __ \____  ___  ____/___  ___  ____/__  /__(_)_____________  /_
 __  /_/ /_  / / /  /    __  |/_/  /    __  /__  /_  _ \_  __ \  __/
@@ -107,11 +107,12 @@ _  ____/_  /_/ // /___  __>  < / /___  _  / _  / /  __/  / / / /_
         /____/                                                     
                                            Python 实现的超星学习通多合一客户端                                        
 使用说明：                                              by greats3an@gmail.com
-    · 输入 q 返回上一级
+    · 输入 {userio.cancel} 返回上一级
     · 按下【回车】键登录                                                                               
 ''',end='')
 
-
+newest_id,Ts,Tscale = None,[],1
+# NewestID,TaskS,Timescale
 def init():
     # First,perform login
     methods = [账号密码登录, 单位登录]
@@ -122,6 +123,23 @@ def init():
     else:
         method = methods[int(settings['loginmethod'])]
     method(settings)
+    # Starts a time sequence executer
+    def _T():
+        '''Execute timed sequence'''
+        global Ts
+        logger.debug('Timed execution timescale:%s s / OP' % Tscale)
+        while True:
+            for t in Ts:
+                if int(time.time() - t['lastexec']) >= t['every']:
+                    t['lastexec'] = time.time()
+                    def wrapper():t['method'](*t['args'],**t['kwargs'])
+                    threading.Thread(target=wrapper,daemon=True).start()
+                    # Starts a subthread for this operation
+            # Execute when time is up
+            time.sleep(Tscale)
+            # Minium timescale of x.xx s
+    threading.Thread(target=_T,daemon=True).start()
+    # Start timed listener
 # endregion
 
 # region Nested Life Cycle
@@ -137,6 +155,13 @@ def init():
     Since all call stacks can be easily traced
 '''
 
+def A(actions):
+    '''`A:Action`,prompts user to select a action of choice'''
+    userio.listout(actions, foreach=lambda x,i: x.__name__, title='可用操作')
+    action = actions[int(userio.get('输入操作【序号】'))]
+    return action
+
+
 def L(method):
     '''`L:Looper`,wrapper for looping inside a function,then breaks once an exception occures'''
     def wrapper(*args, **kwargs):
@@ -148,12 +173,29 @@ def L(method):
                 break
     return wrapper
 
+def T(every,*args,**kwargs):
+    '''T:Timed tasks decorator.Adds timed task into the timed sequence'''
+    def wrapper(method):
+        global Ts
+        Ts.append({'method':method,'every':every,'lastexec':time.time(),'args':args,'kwargs':kwargs})
+    return wrapper
 
-def A(actions):
-    '''`A:Action`,prompts user to select a action of choice'''
-    userio.listout(actions, foreach=lambda x,i: x.__name__, title='可用操作')
-    action = actions[int(userio.get('输入操作【序号】'))]
-    return action
+notifylambda = lambda x,i:f"""[{x['completeTime']}] {x['createrName']} {('（我）' if str(x['createrId']) == str(session.cookies.get('_uid')) else '')}
+{x['title'].strip()}:
+{x['content'].strip() if 'content' in x.keys() else '（请在【通知列表】查看）'}"""
+# Lambda for stringify-ing notifications
+
+@T(1) # Pull every 1s
+def 拉取通知():
+    global newest_id
+    new_notification = notification.pull.PullNotifiactions(lastValue=newest_id,getNew=True)    
+    if 'msg' in new_notification.keys() and newest_id:
+        # Incoming message: Message exisits and the id has been renewed before
+        userio.listout(new_notification['msg'],notifylambda,title='新信息',showindex=False)
+
+    if not newest_id == new_notification['objs']:
+        newest_id = new_notification['objs']
+        logger.debug('Updating newest notification ID to %s' % newest_id)
 
 
 def 课堂列表():
@@ -342,7 +384,7 @@ def 课堂列表():
         
         def 签到():
             try:
-                userio.get('输入 q 取消，否则按回车键继续')
+                userio.get(f'输入 {userio.cancel} 取消，否则按回车键继续')
                 result = activities.signin.NormalSingin(activity['url'])
                 return '结果：\n    ' + result
             except Exception:
@@ -353,7 +395,7 @@ def 课堂列表():
             result = activities.pick.PickInfo(activity['url'])
             userio.listout(
                 result,
-                foreach=lambda x,i:f"{x['name']} {('（我）' if str(x['uid']) == str(session.cookies.get('_uid')) else '......')} {x['updatetimeStr']}",
+                foreach=lambda x,i:f"{x['name']} {('（我）' if str(x['uid']) == str(session.cookies.get('_uid')) else '')} {x['updatetimeStr']}",
                 title='被选到的人')
             userio.get('按回车键',ignore_cancel=True)
             return ''
@@ -372,6 +414,11 @@ def 课堂列表():
             return ''            
 
         def 评分():
+            print('注意：该功能没有对分数进行上、下限进行限制')
+            print('      故阁下需为自己所给出的异常分数')
+            print('      自行负责，请在充分考虑后果后继续')
+            print()
+            userio.get(f'按回车键继续，输入 {userio.cancel} 取消')
             content = userio.get('评分内容')
             score = userio.get('评分分数')
             result = activities.rating.Rate(activity['url'],content,score)
@@ -391,10 +438,26 @@ def 课堂列表():
     AS = [课程列表,活动列表]
     L(A(AS))(course)
 
+def 通知列表(pageid=0):
+    notice = notification.pull.PullNotifiactions(0,pageid)
+    
+    if not ('notices' in notice.keys()):
+        print ('！没有更多通知')
+        raise Exception('No older notifications')
+        return
+
+    userio.listout(
+        notice['notices']['list'],
+        notifylambda,
+        title='通知列表',
+        reverse=True)
+    lastpage = notice['notices']['lastGetId']
+    userio.get(f'按回车查看下一页，否则输入 {userio.cancel} 退出')
+    return 通知列表(lastpage)
 
 def entryPoint():
     '''Entry point to the looper'''
-    AS = [课堂列表]
+    AS = [课堂列表,通知列表]
     # AS:ActionS to be emurated
     L(A(AS))()
 

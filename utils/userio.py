@@ -32,17 +32,17 @@ def get(*args,**kwargs):
 def scrlen(s):
     return sum([2 if unicodedata.east_asian_width(i) in 'WFA' else 1 for i in s])
 
-def listout(items,foreach=lambda x,i: x,title='LIST'):
+def listout(items,foreach=lambda x,i: x,title='LIST',showindex=True,reverse=False):
     '''Prints a list of dictionaries with their index and value processed by `foreach`'''
     print(title,'_' * (50 - scrlen(title)),sep='')
     items = list(items)
     if items:
-        for index in range(0,len(items)):
+        for index in reversed(range(0,len(items))) if reverse else range(0,len(items)):
             item = items[index]
             try:
-                print('',str(index).ljust(5),foreach(item,index))
+                print(*('',str(index).ljust(5)) if showindex else '',foreach(item,index),sep=' ' if showindex else '')
             except Exception as e:
-                print('',str(index).ljust(5),'-')
+                print(*('',str(index).ljust(5)) if showindex else '','-',sep=' ' if showindex else '')
     else:
         print('X     无可用操作')
     print('_' * 50)
