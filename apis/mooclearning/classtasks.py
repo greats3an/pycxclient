@@ -17,6 +17,6 @@ def LoadClassInfo(knowledgeUrl) -> dict:
     response = session.get(
         knowledgeUrl
     )
-    mArg = js2dict.js2dict(response.text)
-    mArg = mArg['mArg'][-1]
+    args = js2dict.js2dict(response.text)
+    mArg = [arg for arg in args['mArg'] if len(arg) > 8][0]
     return loads(mArg)

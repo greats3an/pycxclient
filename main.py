@@ -114,7 +114,25 @@ _  ____/_  /_/ // /___  __>  < / /___  _  / _  / /  __/  / / / /_
 newest_id,Ts,Tscale = None,[],1
 # NewestID,TaskS,Timescale
 def init():
-    # First,perform login
+    # Start timed listener
+    def _T():
+        '''Execute timed sequence'''
+        global Ts
+        while True:
+            for t in Ts:
+                if int(time.time() - t['lastexec']) >= t['every']:
+                    t['lastexec'] = time.time()
+                    def wrapper():
+                        try:
+                            t['method'](*t['args'],**t['kwargs'])
+                        except Exception as e:
+                            logger.warn('Execption occured when executing %s:%s' % (t['method'].__name__,e))              
+                    threading.Thread(target=wrapper,daemon=True).start()
+                    # Starts a subthread for this operation
+            # Execute when time is up
+            time.sleep(Tscale)
+            # Minium timescale of x.xx s
+    # Perform login
     methods = [账号密码登录, 单位登录]
     if not 'loginmethod' in list(settings.keys()) or settings['loginmethod'] == -1:
         userio.listout(methods, foreach=lambda x,i: x.__name__, title='选择登录途径')
@@ -124,22 +142,7 @@ def init():
         method = methods[int(settings['loginmethod'])]
     method(settings)
     # Starts a time sequence executer
-    def _T():
-        '''Execute timed sequence'''
-        global Ts
-        logger.debug('Timed execution timescale:%s s / OP' % Tscale)
-        while True:
-            for t in Ts:
-                if int(time.time() - t['lastexec']) >= t['every']:
-                    t['lastexec'] = time.time()
-                    def wrapper():t['method'](*t['args'],**t['kwargs'])
-                    threading.Thread(target=wrapper,daemon=True).start()
-                    # Starts a subthread for this operation
-            # Execute when time is up
-            time.sleep(Tscale)
-            # Minium timescale of x.xx s
-    threading.Thread(target=_T,daemon=True).start()
-    # Start timed listener
+    threading.Thread(target=_T,daemon=True).start() 
 # endregion
 
 # region Nested Life Cycle
