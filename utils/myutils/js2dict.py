@@ -1,10 +1,10 @@
 '''
 # Js2Dict Module
 
-    Turns js varaibles into dictionaries
+    Turns js varaibles into a dictionary
 '''
 import re,json
-regex = r"(?:var|^|)([ a-zA-Z0-9]*)(?:=)([^;$)]*)(?:;|$)"
+regex = r"(?:var|^|)([ a-zA-Z0-9]*)(?:=)([^$;\n]*)(?:$|;)"
 
 def js2dict(js):
     result = {}
