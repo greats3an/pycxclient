@@ -26,6 +26,7 @@ import sys
 import threading
 import time
 import coloredlogs
+import math
 
 from apis import session,behaviorlogging, captchas, general, mooclearning, registration,activities,notification
 from utils.myutils import userio
@@ -284,8 +285,13 @@ def 课堂列表():
                         header = streamedatom.GetHTTPVideoHeader(status['http'],session,headers=headers)
                         
                         content_length = int(header['http']['Content-Length'])
-                        duration = int(header['atom'].ATOM_DURATION_SEC)
-
+                        real_duration = math.floor(header['atom'].ATOM_DURATION_SEC)
+                        # Note that the video's `real_duration` (in its ATOM header)
+                        report_duration = status['duration']
+                        # Is usually the same as the `report_duration`,yet the `report_duration` given by the server
+                        # ...is sometimes lower than the real_duration.To make `multimedialog` work,the maxium duration
+                        # (in clipTime) must be the `report_duration` otherwise it will result in an 403
+                        # Yet mimicing the playback,we should use `real_duration` to give us a full 100% playback time
                         print('警告：1.更改操作只能【增加】时长，而不能【消减】时长')
                         print()
                         print('       故该操作不可逆，请慎重使用')
@@ -300,10 +306,10 @@ def 课堂列表():
                         print()
                         print('  注：需要刷新视频页面查看结果')
                         print()
-                        print('视频总时长（秒）：', duration)
+                        print('视频总时长（秒）：', real_duration)
 
                         set_duration = int(userio.get('欲调节到的观看时长'))
-                        percentage = set_duration / duration
+                        percentage = set_duration / real_duration
 
 
 
@@ -314,14 +320,14 @@ def 课堂列表():
                             return behaviorlogging.multimedialog.MultimediaLog(
                                 task['defaults']['reportUrl'],
                                 int(played_duration),
-                                duration,
+                                report_duration,
                                 status['dtoken'],
                                 task['defaults']['clazzId'],
                                 attachment['property']['objectid'],
                                 attachment['otherInfo'],
                                 attachment['property']['jobid'] if 'jobid' in attachment['property'].keys(
                                 ) else attachment['property']['_jobid'],
-                                isdrag=0 if played_duration < int(duration) * 0.5 else 4
+                                isdrag=0 if played_duration < int(report_duration) * 0.5 else 4
                                 # Minium playback 'pass' ratio
                             )
 
@@ -331,7 +337,7 @@ def 课堂列表():
                             # Precentage of the loop
                             seek_head = int(content_length * percentage * seek_precentage)
                             # Byte start posistion of the request           
-                            played_duration = int(duration * percentage * seek_precentage)
+                            played_duration = int(real_duration * percentage * seek_precentage)
                             # Time start posistion of the log
                             logger.debug('Stepping watch routine head: %s / %s (%s / 100)' % (seek_head,content_length,seek))
                             # Loads the streaming video sources by chunks
