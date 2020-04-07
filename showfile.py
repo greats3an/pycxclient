@@ -4,13 +4,20 @@
     Shows user a file (filepath,url,bytearray) on most OSes
 '''
 import logging,os,random,threading,requests,time
+from pathlib import Path
 logger = logging.getLogger('ShowFile')
 
+tempfolder = 'temp'
+# Temp folder to hold bytes/url types
 buffersize = 2048
-
+# How many bytes will `resopnse.iter_content` iterate
 tempname_length = 8
+# The length of the generated temp name
+fileprocesser = ''
+# External file processer file path,used to open files
 
-
+# Creates temp folder if not exists
+if not os.path.exists(tempfolder):os.makedirs(tempfolder)
 class NotSupportedFormatException(Exception):
     def __init__(self,filename):
         super().__init__('Unable to show file %s:Not supported' % filename)
@@ -38,6 +45,7 @@ def _GenerateRandomFilename(ext=''):
     if os.path.exists(randname):
         logger.debug('%s exisits already,changeing file name' % randname)
         randname = _GenerateRandomFilename(ext)
+    randname = tempfolder + '/' + randname
     return randname
 
 def _Show(path):
@@ -45,7 +53,10 @@ def _Show(path):
         Base method which shows a local file on all non-tty only OSes (including Termux)
     '''
     logger.debug('Opening file %s' % path)
-    if 'termux' in str(os.environ):
+    if fileprocesser:
+        # Uses custom fileprocesser if defined
+        os.system('%s %s' % (fileprocesser,path))
+    elif 'termux' in str(os.environ):
         # Special compatibility fix for Termux,the android terminal emulator:
         # View file via termux-open,which will open the file 
         os.system('termux-open %s' % path)
