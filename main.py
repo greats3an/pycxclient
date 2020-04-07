@@ -27,18 +27,29 @@ import threading
 import time
 import coloredlogs
 import math
+import io
 
 from apis import session,behaviorlogging, captchas, general, mooclearning, registration,activities,notification
 from utils.myutils import userio
 from utils.showfile import showfile
 from utils.atom import streamedatom
-coloredlogs.install(logging.DEBUG)
-# Selecting user's `unit`
+
+# Generate a path where the logging text will be write to
+logfile = time.strftime('PyCxClient_%H%M%S',time.localtime()) + '.log'
+# Setup stdout
+def WriteWrapper(write):
+    def wrapper(text):
+        write(text)
+        open(logfile,'a+').write(text)
+    return wrapper
+sys.stdout.write = WriteWrapper(sys.stdout.write)
+coloredlogs.install(logging.DEBUG,stream=sys.stdout)
 
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 # turn up logs levels for urllib3 which is used by requests
 logger = logging.getLogger('main')
 # local logger
+logger.debug('Program started at %s' % time.strftime('%H:%M:%S',time.localtime()))
 # region Init
 '''
     Login sequence
@@ -475,7 +486,9 @@ def entryPoint():
 # region End
 def end():
     session.close()
-    userio.get('按任意键退出')
+    userio.get('按任意键退出,日志文件将会被清除')
+    os.remove(logfile)
+    sys.exit(0)
 # endregion
 
 if __name__ == "__main__":
