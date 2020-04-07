@@ -35,7 +35,7 @@ from utils.showfile import showfile
 from utils.atom import streamedatom
 
 # Generate a path where the logging text will be write to
-logfile = time.strftime('PyCxClient_%H%M%S',time.localtime()) + '.log'
+logfile = showfile._GenerateRandomFilename(ext=time.strftime('PyCxClient_%H%M',time.localtime()) + '.log')
 # Setup stdout
 def WriteWrapper(write):
     def wrapper(text):

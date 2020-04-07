@@ -4,7 +4,10 @@
     Shows user a file (filepath,url,bytearray) on most OSes
 '''
 import logging,os,random,threading,requests,time
+from pathlib import Path
 logger = logging.getLogger('ShowFile')
+
+tempfolder = 'temp'
 
 buffersize = 2048
 
@@ -12,6 +15,8 @@ tempname_length = 8
 
 fileprocesser = ''
 
+# Creates temp folder if not exists
+if not os.path.exists(tempfolder):os.makedirs(tempfolder)
 class NotSupportedFormatException(Exception):
     def __init__(self,filename):
         super().__init__('Unable to show file %s:Not supported' % filename)
@@ -39,6 +44,7 @@ def _GenerateRandomFilename(ext=''):
     if os.path.exists(randname):
         logger.debug('%s exisits already,changeing file name' % randname)
         randname = _GenerateRandomFilename(ext)
+    randname = tempfolder + '/' + randname
     return randname
 
 def _Show(path):
