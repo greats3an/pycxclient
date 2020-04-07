@@ -10,7 +10,7 @@ buffersize = 2048
 
 tempname_length = 8
 
-imageviewer = ''
+fileprocesser = ''
 
 class NotSupportedFormatException(Exception):
     def __init__(self,filename):
@@ -46,9 +46,9 @@ def _Show(path):
         Base method which shows a local file on all non-tty only OSes (including Termux)
     '''
     logger.debug('Opening file %s' % path)
-    if imageviewer:
-        # Uses custom imageviewer if defined
-        os.system('%s %s' % (imageviewer,path))
+    if fileprocesser:
+        # Uses custom fileprocesser if defined
+        os.system('%s %s' % (fileprocesser,path))
     elif 'termux' in str(os.environ):
         # Special compatibility fix for Termux,the android terminal emulator:
         # View file via termux-open,which will open the file 

@@ -56,8 +56,8 @@ logger.debug('Program started at %s' % time.strftime('%H:%M:%S',time.localtime()
 '''
     Login sequence
 '''
-showfile.imageviewer = sys.argv[1] if len(sys.argv) > 1 else ''
-if showfile.imageviewer:logger.debug('Using custom file processer %s' % showfile.imageviewer)
+showfile.fileprocesser = sys.argv[1] if len(sys.argv) > 1 else ''
+if showfile.fileprocesser:logger.debug('Using custom file processer %s' % showfile.fileprocesser)
 # Sets custom
 def 账号密码登录(settings):
     '''Perform login by interfacing with user,returns login result'''
