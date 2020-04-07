@@ -31,7 +31,8 @@ def RenewCaptcha(prompt=False) -> Union[bytearray,str]:
         logger.debug('Prompting user to input captcha')
         userio.get('即将输入验证码，请记下您所看到的四位有效数字；按下回车查看验证码:',end='[确认]')
         # Deletes the old file
-        showfile.ShowBytes(captcha,ext='jpg',lifetime=2)
+        showfile.tempname_length = 4
+        showfile.ShowBytes(captcha,ext='jpg',lifetime=0)
         captcha = userio.get('输入验证码')
     return captcha
 
