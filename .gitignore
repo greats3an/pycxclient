@@ -5,6 +5,5 @@
 *.bmp
 *.jpg
 *.log
-temp
-imageviewer*
+*.cmd
 notes.txt
