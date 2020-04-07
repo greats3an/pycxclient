@@ -15,7 +15,8 @@ tempname_length = 8
 # The length of the generated temp name
 fileprocesser = ''
 # External file processer file path,used to open files
-
+randchars = 'ABCDEFGHIJKLMNOPQRST0123456789'
+# Specifiy what chars will be used to generate random filenames
 # Creates temp folder if not exists
 if not os.path.exists(tempfolder):os.makedirs(tempfolder)
 class NotSupportedFormatException(Exception):
@@ -40,7 +41,7 @@ def _TimedDestroy(path,lifetime):
 
 def _GenerateRandomFilename(ext=''):
     '''Generates a random file name consisting the extension given'''
-    randname = ''.join([random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRST0123456789') for i in range(0,tempname_length)])
+    randname = ''.join([random.choice(randchars) for i in range(0,tempname_length)])
     randname = randname + '.' + ext
     if os.path.exists(randname):
         logger.debug('%s exisits already,changeing file name' % randname)
