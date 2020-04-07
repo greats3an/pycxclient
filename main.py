@@ -42,6 +42,7 @@ def WriteWrapper(write):
         write(text)
         open(logfile,'a+',encoding='utf-8').write(text)
     return wrapper
+sys.stdout.reconfigure(encoding='utf-8')
 sys.stdout.write = WriteWrapper(sys.stdout.write)
 coloredlogs.install(logging.DEBUG,stream=sys.stdout)
 
