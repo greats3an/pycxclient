@@ -15,7 +15,7 @@ Python 实现的超星网课客户端
 	python -m pip install --user -U -r requirements.txt
 
 # 使用
-	python main.py
+	python main.py [imageviewer]
 
 # 说明
 本工具旨在利用 [超星【学习通】](http://www.chaoxing.com/ "超星【学习通】") Web端的API,以 Python 作为前端进行操作；且通过对Web端的逆向发掘出一些正常使用不能主动触发的API

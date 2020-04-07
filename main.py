@@ -42,6 +42,7 @@ def WriteWrapper(write):
         write(text)
         open(logfile,'a+',encoding='utf-8').write(text)
     return wrapper
+sys.stdin.reconfigure(encoding='utf-8')
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stdout.write = WriteWrapper(sys.stdout.write)
 coloredlogs.install(logging.DEBUG,stream=sys.stdout)
@@ -55,7 +56,9 @@ logger.debug('Program started at %s' % time.strftime('%H:%M:%S',time.localtime()
 '''
     Login sequence
 '''
-
+showfile.imageviewer = sys.argv[1] if len(sys.argv) > 1 else ''
+if showfile.imageviewer:logger.debug('Using custom file processer %s' % showfile.imageviewer)
+# Sets custom
 def 账号密码登录(settings):
     '''Perform login by interfacing with user,returns login result'''
     print('【卡密登录】')
