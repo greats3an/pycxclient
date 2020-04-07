@@ -40,7 +40,7 @@ logfile = time.strftime('PyCxClient_%H%M%S',time.localtime()) + '.log'
 def WriteWrapper(write):
     def wrapper(text):
         write(text)
-        open(logfile,'a+').write(text)
+        open(logfile,'a+',encoding='utf-8').write(text)
     return wrapper
 sys.stdout.write = WriteWrapper(sys.stdout.write)
 coloredlogs.install(logging.DEBUG,stream=sys.stdout)
@@ -101,7 +101,7 @@ def 单位登录(settings):
         logger.fatal('Failed to login:%s' %
                       result['mes'] if 'mes' in result.keys() else '原因未知')
         userio.get('按任意键', end='退出')
-        sys.exit()
+        sys.exit(2)
     # We have logged in,now,list all the courses the user has
     logger.info('User logged in')
     return result
