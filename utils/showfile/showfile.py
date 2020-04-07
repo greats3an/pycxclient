@@ -8,12 +8,13 @@ from pathlib import Path
 logger = logging.getLogger('ShowFile')
 
 tempfolder = 'temp'
-
+# Temp folder to hold bytes/url types
 buffersize = 2048
-
+# How many bytes will `resopnse.iter_content` iterate
 tempname_length = 8
-
+# The length of the generated temp name
 fileprocesser = ''
+# External file processer file path,used to open files
 
 # Creates temp folder if not exists
 if not os.path.exists(tempfolder):os.makedirs(tempfolder)
