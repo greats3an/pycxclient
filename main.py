@@ -33,7 +33,7 @@ from apis import session,behaviorlogging, captchas, general, mooclearning, regis
 from utils.myutils import userio
 from utils.showfile import showfile
 from utils.atom import streamedatom
-session.verify = False
+
 # Generate a path where the logging text will be write to
 logfile = showfile._GenerateRandomFilename(ext=time.strftime('PyCxClient_%H%M',time.localtime()) + '.log')
 # Setup stdout
