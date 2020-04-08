@@ -32,9 +32,12 @@ def get(*args,**kwargs):
 def scrlen(s):
     return sum([2 if unicodedata.east_asian_width(i) in 'WFA' else 1 for i in s])
 
+def header(str,pad='_',total=50):
+    return str + pad * (total - scrlen(str))
+
 def listout(items,foreach=lambda x,i: x,title='LIST',showindex=True,reverse=False):
     '''Prints a list of dictionaries with their index and value processed by `foreach`'''
-    print(title,'_' * (50 - scrlen(title)),sep='')
+    print(header(title),sep='')
     items = list(items)
     if items:
         for index in reversed(range(0,len(items))) if reverse else range(0,len(items)):
