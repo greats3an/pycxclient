@@ -33,7 +33,7 @@ from apis import session,behaviorlogging, captchas, general, mooclearning, regis
 from utils.myutils import userio
 from utils.showfile import showfile
 from utils.atom import streamedatom
-
+session.verify = False
 # Generate a path where the logging text will be write to
 logfile = showfile._GenerateRandomFilename(ext=time.strftime('PyCxClient_%H%M',time.localtime()) + '.log')
 # Setup stdout
@@ -479,9 +479,15 @@ def 通知列表(pageid=0):
     userio.get(f'按回车查看下一页，否则输入 {userio.cancel} 退出')
     return 通知列表(lastpage)
 
+def 输入邀请码():
+    inviteCode = userio.get('请输入邀请码')
+    inviteMessage = mooclearning.invitecode.ParseInviteCode(inviteCode)
+    print(inviteCode)
+    raise Exception("Done")
+
 def entryPoint():
     '''Entry point to the looper'''
-    AS = [课堂列表,通知列表]
+    AS = [课堂列表,通知列表,输入邀请码]
     # AS:ActionS to be emurated
     L(A(AS))()
 
