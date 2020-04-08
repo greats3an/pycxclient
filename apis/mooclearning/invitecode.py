@@ -37,18 +37,18 @@ def ParseInviteCode(inviteCode) -> dict:
     }
     return data
 
-def JoinByInviteCode(inviteCode,classId,userId) -> dict:
+def JoinByInviteCode(courseId,classId) -> dict:
     '''
         Requires user to be logged in beforehand
         Loads the specified course as a single `dict` item
     '''
-    logger.debug('Joining invite code %s' % inviteCode)
+    logger.debug('Joining invite code %s' % courseId)
     response = session.get(
         'http://mooc1-api.chaoxing.com/teachingClassPhoneManage/phone/getCourseJson',
         params={
-            'courseId':inviteCode,
+            'courseId':courseId,
             'classId':classId,
-            'userId':userId
+            'userId':session.cookies.get('_uid')
         }
     )    
     return json.loads(response.text)

@@ -7,10 +7,10 @@ PyCxClient
 '''
 
 settings = {
-    'loginmethod': 1,
-    'username': '341021200412120058',
-    'password': 's654321',
-    'schoolid': '62459'
+    'loginmethod': -1,
+    'username': '',
+    'password': '',
+    'schoolid': ''
 }
 # Set-up these strings to login semi-automaticly (you still need to pass Captcha)
 mimic_settings = {
@@ -267,7 +267,7 @@ def 课堂列表():
                 taskpoint = _select(task)
 
                 print('\n'.join([
-                    f"任务点状态{'_' * 50}",
+                    f"{userio.header('任务点状态')}",
                     f"  名称：{taskpoint['attachment']['property']['name']}",
                     f"  类型：{taskpoint['attachment']['type']}",
                     f"通过状态：{['未通过 / 未知','已通过'][taskpoint['status']['isPassed']]}"
@@ -482,8 +482,17 @@ def 通知列表(pageid=0):
 def 输入邀请码():
     inviteCode = userio.get('请输入邀请码')
     inviteMessage = mooclearning.invitecode.ParseInviteCode(inviteCode)
-    print('课程')
-
+    print(userio.header('课程信息'))
+    print(f'''
+    课程名：  {inviteMessage['title']}
+    授课教师：{inviteMessage['teacher']}
+    附加信息：{inviteMessage['msg']}
+    ''')
+    if inviteMessage['msg']:raise Exception(inviteMessage['msg'])
+    userio.get('输入 q 取消添加，否则按回车参加该课程')
+    result = mooclearning.invitecode.JoinByInviteCode(inviteMessage['courseId'],inviteMessage['classId'])
+    print('结果：',result['msg'])
+    raise Exception('Done')
 def entryPoint():
     '''Entry point to the looper'''
     AS = [课堂列表,通知列表,输入邀请码]
