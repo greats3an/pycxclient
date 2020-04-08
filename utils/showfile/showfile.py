@@ -46,7 +46,7 @@ def _GenerateRandomFilename(ext=''):
     if os.path.exists(randname):
         logger.debug('%s exisits already,changeing file name' % randname)
         randname = _GenerateRandomFilename(ext)
-    randname = tempfolder + '/' + randname
+    randname = os.path.join(tempfolder,randname)
     return randname
 
 def _Show(path):
