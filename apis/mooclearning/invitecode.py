@@ -25,16 +25,17 @@ def ParseInviteCode(inviteCode) -> dict:
         }
     )    
     soup = BeautifulSoup(response.text, 'lxml')
-    infobox = soup.find('dl')
+    infobox,blankTips = soup.find('dl'),soup.find('p',{'class':'blankTips'})
     data = {
-        'msg':soup.find('p',{'class':'blankTips'}).text,
-        'title':infobox.find('h3').text,
-        'teacher':infobox.find('p').text,
-        'cover':infobox.find('img').attrs['src'],
-        'courseId':soup.find('input',{'name':'courseId'}).attrs['value'],
-        'classId':soup.find('input',{'name':'classId'}).attrs['value'],
-        'userId':soup.find('input',{'name':'userId'}).attrs['value'],
+        'msg':blankTips.text if blankTips else '',
+        'title':infobox.find('h3').text if not blankTips else '',
+        'teacher':infobox.find('p').text if not blankTips else '',
+        'cover':infobox.find('img').attrs['src'] if not blankTips else '',
+        'courseId':soup.find('input',{'name':'courseId'}).attrs['value'] if not blankTips else 0,
+        'classId':soup.find('input',{'name':'classId'}).attrs['value'] if not blankTips else 0,
+        'userId':soup.find('input',{'name':'userId'}).attrs['value'] if not blankTips else 0,
     }
+    return data
 
 def JoinByInviteCode(inviteCode,classId,userId) -> dict:
     '''

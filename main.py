@@ -7,10 +7,10 @@ PyCxClient
 '''
 
 settings = {
-    'loginmethod': -1,
-    'username': '',
-    'password': '',
-    'schoolid': ''
+    'loginmethod': 1,
+    'username': '341021200412120058',
+    'password': 's654321',
+    'schoolid': '62459'
 }
 # Set-up these strings to login semi-automaticly (you still need to pass Captcha)
 mimic_settings = {
@@ -482,8 +482,7 @@ def 通知列表(pageid=0):
 def 输入邀请码():
     inviteCode = userio.get('请输入邀请码')
     inviteMessage = mooclearning.invitecode.ParseInviteCode(inviteCode)
-    print(inviteCode)
-    raise Exception("Done")
+    print('课程')
 
 def entryPoint():
     '''Entry point to the looper'''
