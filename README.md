@@ -22,6 +22,7 @@ Python 实现的超星网课客户端
 
 # 功能
 - 获取下载链接
+- 设置观看足迹
 - 视频项目
 - - 获取封面
 - - 下载为MP3
@@ -37,12 +38,8 @@ Python 实现的超星网课客户端
 - - 定期拉取新通知
 
 # TODO
-- 实现 PM 推拉
-- 弄个 GUI ？
-- 集成下载逻辑 （Aria2 ?）
-- 自动识别 Captcha （Tesseract ？）
-
-# Need some help here!
-目前为止，所有的逆向工作都是基于Web端进行；而移动端的一些常用的API则无缘发掘；若各位有方法对 Android / iOS 设备的学习通 App 抓包或逆向，欢迎指点迷津🙏
-
-e-mail : greats3an@gmail.com
+- You tell me ( ͡° ͜ʖ ͡°)
+# Won't Do
+- GUI
+- 集成下载逻辑
+- 自动识别 Captcha
