@@ -93,6 +93,7 @@ def init_parseargs():
     showfile.fileprocesser = sys.argv[1] if len(sys.argv) > 1 else ''
     if showfile.fileprocesser:logger.debug('Using custom file processer %s' % showfile.fileprocesser)
     # setup custom fileprocsser if set in argv
+    # TODO:parse arguments for settings
 
 # endregion
 
@@ -111,7 +112,7 @@ def 账号密码登录(settings):
         logger.fatal('Failed to login:%s' %
                       result['mes'] if 'mes' in result.keys() else '原因未知')
         userio.get('按任意键', end='退出')
-        sys.exit()
+        sys.exit(2)
     # We have logged in,now,list all the courses the user has
     logger.info('User logged in')
     return result
@@ -169,7 +170,7 @@ def init():
     '''
     Setup loggings and argparsers.
 
-    Then,Starts all timed tasks declared with `decorator @T([interval])` and Prompt to login
+    Then,Prompt to login and starts all timed tasks declared with `decorator @T([interval])`
     '''
     # Start timed execution thread
     def _T():
@@ -191,12 +192,12 @@ def init():
             # Minium timescale of x.xx s
     # First,initialize logging
     init_logging()
-    # And Starts a time sequence executer
-    threading.Thread(target=_T,daemon=True).start() 
     # Then,parses arguments
     init_parseargs()
     # Finally,prompt the user to login
     init_login()
+    # And Starts a time sequence executer
+    threading.Thread(target=_T,daemon=True).start() 
 
 # endregion
 
