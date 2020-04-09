@@ -1,16 +1,16 @@
 '''
-# NumericalCaptcha Module
+# Logincaptcha Module
 
     Used to get captcha image witch will be needed
 
-    for logging in,and etc
+    for logging in
 '''
 from .. import session
 from utils.myutils import userio
 from utils.showfile import showfile
 from typing import Union
 import os,logging
-logger = logging.getLogger('NumericalCaptcha')
+logger = logging.getLogger('Logincaptcha')
 def RenewCaptcha(prompt=False) -> Union[bytearray,str]:
     '''
         Renews captcha

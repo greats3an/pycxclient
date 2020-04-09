@@ -98,7 +98,7 @@ def 单位登录(settings):
         settings['password'] if settings['password'] else userio.get('输入您的密码'),
         # Prompt the user to input the captcha code
         # Renewing captcha,which will also give us a new JSESSIONID
-        captchas.numericalcaptcha.RenewCaptcha(True)
+        captchas.logincaptcha.RenewCaptcha(True)
     )
 
     if not 'url' in result.keys():
@@ -247,9 +247,9 @@ def 课堂列表():
                 task = class_[int(userio.get('输入任务【序号】'))]
                 # Now we load the info of such sub task
                 logger.debug('Loading task %s' % task['title'])
-                task = mooclearning.classtasks.LoadClassInfo(task['knowledge_url'])
+                _task = mooclearning.classtasks.LoadClassInfo(task['knowledge_url'])
                 # returns the task selected
-                return task            
+                return {**task,**_task}
             task = _select(class_)
 
             def 任务点列表(task):
@@ -280,7 +280,7 @@ def 课堂列表():
                     直链：{status['download']}
                     可续传：{status['http']} (需要额外 Header 'referer':'https://mooc1-1.chaoxing.com/ananas/modules/video/index.html?v=2019-1113-1705')
                     """
-
+        
                     def 获取封面():
                         return f"""
                     链接：{status['screenshot']}
@@ -391,7 +391,10 @@ def 课堂列表():
                 AS = _enumerate(task, taskpoint['attachment'], taskpoint['status'])
                 print(A(AS)())
 
-            AS = [任务点列表]
+            def 设置阅读记录(task):
+                result = behaviorlogging.studentstudy.SetStudentStudy(task['url'])
+                print(result)
+            AS = [任务点列表,设置阅读记录]
             A(AS)(task)
 
         AS = [任务列表]
