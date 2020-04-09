@@ -496,6 +496,7 @@ def 输入邀请码():
     result = mooclearning.invitecode.JoinByInviteCode(inviteMessage['courseId'],inviteMessage['classId'])
     print('结果：',result['msg'])
     raise Exception('Done')
+
 def entryPoint():
     '''Entry point to the looper'''
     AS = [课堂列表,通知列表,输入邀请码]

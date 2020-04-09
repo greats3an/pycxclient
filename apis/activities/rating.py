@@ -3,7 +3,7 @@
 
     Rate a rating activity
 
-    (appType=23)
+    (appType:23)
 '''
 from .. import session
 from bs4 import BeautifulSoup
