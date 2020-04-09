@@ -194,6 +194,8 @@ def init():
     init_logging()
     # Then,parses arguments
     init_parseargs()
+    # Splash text...why not?
+    splash()
     # Finally,prompt the user to login
     init_login()
     # And Starts a time sequence executer
@@ -564,8 +566,6 @@ def end():
 
 # Lifecycle of this program:
 if __name__ == "__main__":
-    # Splash text...why not?
-    splash()
     # Init: Logging in & `not-a-bot` verification
     init()
     # Enters entery point once finished initialzing
