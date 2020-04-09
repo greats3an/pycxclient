@@ -17,9 +17,11 @@ def RenewCaptcha(prompt=False) -> Union[bytearray,str]:
 
         Which will also set the session's cookies to identifiy with
 
-        if `not prompt`:Returns a `bytearray` object of the captcha image
+        ## prompt
+
+        if `not prompt`:Returns a `bytearray` object of the downloaded captcha image
         
-        if `prompt`:Returns the user inputed captcha code        
+        if `prompt`:Returns the user to input the captcha code,returns it as a string
     '''
     logger.debug('Renewing captcha')    
     response = session.get(

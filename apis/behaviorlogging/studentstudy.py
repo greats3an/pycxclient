@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger('StudentStudy')
 def SetStudentStudy(studyUrl) -> dict:
     '''
-        Returns a `dict` object contating infomations of the operation
+        Sets your study log to valid
     '''
     UrlParams = urlparams.GetParams(studyUrl)
     data = {

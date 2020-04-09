@@ -12,6 +12,11 @@ logger = logging.getLogger('DocumentPoint')
 def SetDocumentPoint(jobid,knowledgeid,courseid,clazzid,jtoken) -> dict:
     '''
         Returns a `dict` object contating infomations of the operation
+        
+        ## jobid,knowledgeid,courseid,clazzid,jtoken
+
+        All of them can be fetched via `general.objectstatus.GetObjectStatus`
+
     '''
     logger.debug('Setting document-point for course %s' % courseid)
     response = session.get(

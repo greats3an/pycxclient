@@ -6,19 +6,6 @@ PyCxClient
     by mos9527 @ mos9527.tooo.top
 '''
 
-settings = {
-    'loginmethod': -1,
-    'username': '',
-    'password': '',
-    'schoolid': ''
-}
-# Set-up these strings to login semi-automaticly (you still need to pass Captcha)
-mimic_settings = {
-    'step':20,
-    # In percentage * 100,the step of the mimic operation
-    'block':256
-    # The block size of a video request
-}
 import json
 import logging
 import os
@@ -34,31 +21,83 @@ from utils.myutils import userio
 from utils.showfile import showfile
 from utils.atom import streamedatom
 
-# Generate a path where the logging text will be write to
-logfile = showfile._GenerateRandomFilename(ext=time.strftime('PyCxClient_%H%M',time.localtime()) + '.log')
-# Setup stdout
-def WriteWrapper(write):
-    def wrapper(text):
-        write(text)
-        open(logfile,'a+',encoding='utf-8').write(text)
-    return wrapper
-sys.stdin.reconfigure(encoding='utf-8')
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stdout.write = WriteWrapper(sys.stdout.write)
-coloredlogs.install(logging.DEBUG,stream=sys.stdout)
-
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-# turn up logs levels for urllib3 which is used by requests
-logger = logging.getLogger('main')
-# local logger
-logger.debug('Program started at %s' % time.strftime('%H:%M:%S',time.localtime()))
 # region Init
 '''
-    Login sequence
+    Initialzation calls
+
+    Contains argument parsing,logging and other setups.
+
+    Logging & Argparser
 '''
-showfile.fileprocesser = sys.argv[1] if len(sys.argv) > 1 else ''
-if showfile.fileprocesser:logger.debug('Using custom file processer %s' % showfile.fileprocesser)
-# Sets custom
+# region Settings
+
+settings = {
+    'loginmethod': -1,
+    'username': '',
+    'password': '',
+    'schoolid': ''
+}
+# Set-up these strings to login semi-automaticly (you still need to pass Captcha)
+mimic_settings = {
+    'step':20,
+    # In percentage * 100,the step of the mimic operation
+    'block':256
+    # The block size of a video request
+}
+# endregion
+
+# region Misc Setup
+def splash():
+    '''ASCII Art Splash,just for fun.'''
+    userio.get(f'''
+________        _________      __________________            _____ 
+___  __ \____  ___  ____/___  ___  ____/__  /__(_)_____________  /_
+__  /_/ /_  / / /  /    __  |/_/  /    __  /__  /_  _ \_  __ \  __/
+_  ____/_  /_/ // /___  __>  < / /___  _  / _  / /  __/  / / / /_  
+/_/     _\__, / \____/  /_/|_| \____/  /_/  /_/  \___//_/ /_/\__/  
+        /____/                                                     
+                                           Python 实现的超星学习通多合一客户端                                        
+使用说明：                                              by greats3an@gmail.com
+    · 输入 {userio.cancel} 返回上一级
+    · 按下【回车】键登录                                                                               
+''',end='')
+# endregion
+
+# region Logging Setup
+
+# Set root logger & Generate a path where the logging text will be write to
+logger,logfile = logging.getLogger('main'),showfile._GenerateRandomFilename(ext=time.strftime('PyCxClient_%H%M',time.localtime()) + '.log')
+def init_logging():
+    global logger
+    # Setup stdout
+    def WriteWrapper(write):
+        def wrapper(text):
+            write(text)
+            open(logfile,'a+',encoding='utf-8').write(text)
+        return wrapper
+    sys.stdin.reconfigure(encoding='utf-8')
+    sys.stdout.reconfigure(encoding='utf-8')
+    # set io encodings to `utf-8`
+    sys.stdout.write = WriteWrapper(sys.stdout.write)
+    coloredlogs.install(logging.DEBUG,stream=sys.stdout)
+    # Install coloredlogs ... for colored logs.
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    # turn up logs levels for urllib3 which is used by requests
+    logger.debug('Program started at %s' % time.strftime('%H:%M:%S',time.localtime()))
+
+# endregion
+
+# region Argument Parser
+def init_parseargs():
+    global settings,mimic_settings
+    showfile.fileprocesser = sys.argv[1] if len(sys.argv) > 1 else ''
+    if showfile.fileprocesser:logger.debug('Using custom file processer %s' % showfile.fileprocesser)
+    # setup custom fileprocsser if set in argv
+
+# endregion
+
+# region Login sequence
+
 def 账号密码登录(settings):
     '''Perform login by interfacing with user,returns login result'''
     print('【卡密登录】')
@@ -110,27 +149,29 @@ def 单位登录(settings):
     logger.info('User logged in')
     return result
 
-'''
-    Work before loop
-'''
-def splash():
-    userio.get(f'''
-________        _________      __________________            _____ 
-___  __ \____  ___  ____/___  ___  ____/__  /__(_)_____________  /_
-__  /_/ /_  / / /  /    __  |/_/  /    __  /__  /_  _ \_  __ \  __/
-_  ____/_  /_/ // /___  __>  < / /___  _  / _  / /  __/  / / / /_  
-/_/     _\__, / \____/  /_/|_| \____/  /_/  /_/  \___//_/ /_/\__/  
-        /____/                                                     
-                                           Python 实现的超星学习通多合一客户端                                        
-使用说明：                                              by greats3an@gmail.com
-    · 输入 {userio.cancel} 返回上一级
-    · 按下【回车】键登录                                                                               
-''',end='')
+def init_login():
+    # Perform login
+    methods = [账号密码登录, 单位登录]
+    if not 'loginmethod' in list(settings.keys()) or settings['loginmethod'] == -1:
+        userio.listout(methods, foreach=lambda x,i: x.__name__, title='选择登录途径')
+        method = methods[int(userio.get('输入登录方法【序号】',end='>>>'))]
+        # Then we enter the main loop
+    else:
+        method = methods[int(settings['loginmethod'])]
+    method(settings)    
+# endregion
+
+# region init()
 
 newest_id,Ts,Tscale = None,[],1
 # NewestID,TaskS,Timescale
 def init():
-    # Start timed listener
+    '''
+    Setup loggings and argparsers.
+
+    Then,Starts all timed tasks declared with `decorator @T([interval])` and Prompt to login
+    '''
+    # Start timed execution thread
     def _T():
         '''Execute timed sequence'''
         global Ts
@@ -148,17 +189,17 @@ def init():
             # Execute when time is up
             time.sleep(Tscale)
             # Minium timescale of x.xx s
-    # Perform login
-    methods = [账号密码登录, 单位登录]
-    if not 'loginmethod' in list(settings.keys()) or settings['loginmethod'] == -1:
-        userio.listout(methods, foreach=lambda x,i: x.__name__, title='选择登录途径')
-        method = methods[int(userio.get('输入登录方法【序号】',end='>>>'))]
-        # Then we enter the main loop
-    else:
-        method = methods[int(settings['loginmethod'])]
-    method(settings)
-    # Starts a time sequence executer
+    # First,initialize logging
+    init_logging()
+    # And Starts a time sequence executer
     threading.Thread(target=_T,daemon=True).start() 
+    # Then,parses arguments
+    init_parseargs()
+    # Finally,prompt the user to login
+    init_login()
+
+# endregion
+
 # endregion
 
 # region Nested Life Cycle
@@ -173,7 +214,7 @@ def init():
 
     Since all call stacks can be easily traced
 '''
-
+# region Looper Utilities
 def A(actions):
     '''`A:Action`,prompts user to select a action of choice'''
     userio.listout(actions, foreach=lambda x,i: x.__name__, title='可用操作')
@@ -198,7 +239,9 @@ def T(every,*args,**kwargs):
         global Ts
         Ts.append({'method':method,'every':every,'lastexec':time.time(),'args':args,'kwargs':kwargs})
     return wrapper
+# endregion
 
+# region Notification Managment
 notifylambda = lambda x,i:f"""[{x['completeTime']}] {x['createrName']} {('（我）' if str(x['createrId']) == str(session.cookies.get('_uid')) else '')}
 {x['title'].strip()}:
 {x['content'].strip() if 'content' in x.keys() else '（请在【通知列表】查看）'}"""
@@ -215,8 +258,9 @@ def 拉取通知():
     if not newest_id == new_notification['objs']:
         newest_id = new_notification['objs']
         logger.debug('Updating newest notification ID to %s' % newest_id)
+# endregion
 
-
+# region Nested Functions
 def 课堂列表():
     def _select():
         '''User will pick one courses from the list,this funtions returns the one selected'''
@@ -393,9 +437,11 @@ def 课堂列表():
 
             def 设置阅读记录(task):
                 result = behaviorlogging.studentstudy.SetStudentStudy(task['url'])
-                print(result)
+                print('结果：',result)
+                raise Exception('Done')
+
             AS = [任务点列表,设置阅读记录]
-            A(AS)(task)
+            L(A(AS))(task)
 
         AS = [任务列表]
         L(A(AS))(class_)
@@ -416,7 +462,6 @@ def 课堂列表():
                 return '结果：\n    ' + result
             except Exception:
                 return ''
-
         
         def 查看选人情况():
             result = activities.pick.PickInfo(activity['url'])
@@ -458,8 +503,7 @@ def 课堂列表():
                 '11':[查看选人情况],
                 '23':[查看评分信息,评分]
             }
-            return  operations['*'] + operations[str(activity_type)] if str(activity_type) in operations.keys() else []
-        
+            return  operations['*'] + operations[str(activity_type)] if str(activity_type) in operations.keys() else []        
         print(A(_enumerate(activity['activity_type']))())
 
     AS = [课程列表,活动列表]
@@ -497,11 +541,15 @@ def 输入邀请码():
     print('结果：',result['msg'])
     raise Exception('Done')
 
+# endregion
+
+# region entryPoint()
 def entryPoint():
     '''Entry point to the looper'''
     AS = [课堂列表,通知列表,输入邀请码]
     # AS:ActionS to be emurated
     L(A(AS))()
+# endregion
 
 # endregion
 
@@ -513,9 +561,13 @@ def end():
     sys.exit(0)
 # endregion
 
+# Lifecycle of this program:
 if __name__ == "__main__":
-    # Enters entery point once startup
+    # Splash text...why not?
     splash()
+    # Init: Logging in & `not-a-bot` verification
     init()
+    # Enters entery point once finished initialzing
     L(entryPoint)()
+    # End: Cleaning up logs & closes connection.Exits with code 0
     end()

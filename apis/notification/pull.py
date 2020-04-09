@@ -9,12 +9,23 @@ import logging
 logger = logging.getLogger('Pull')
 def PullNotifiactions(type=0,lastValue='',getNew=False) -> dict:
     '''
+        # 通知
+        
         Returns a `dict` object contating infomations on notifications
 
-        type:
+        ## type:
 
-            0       :       All messages received & sent
-            1       :       Messages sent
+        0       :       All messages received & sent
+
+        1       :       Messages sent
+
+        ## lastValue:
+        
+        Specifies last recevied notifcation,only works when `getNew` is `True`
+
+        ## getNew:
+
+        Retrives all notifications that has `id` greater than `lastValue`
     '''
     response = session.post(
         [

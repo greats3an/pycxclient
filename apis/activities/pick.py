@@ -13,7 +13,9 @@ logger = logging.getLogger('Pick')
 
 def PickInfo(pick_url) -> dict:
     '''
-        For 选人
+        # 选人
+
+        Returns picking info
     '''
     logger.debug('Loading Pick info with URL %s' % pick_url)
     

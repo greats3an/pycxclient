@@ -10,7 +10,8 @@ import logging
 logger = logging.getLogger('SerachUnits')
 def SearchUnits(filter) -> list:
     '''
-        Returns a `list` object containing nearest results to the filter given
+        # 单位列表
+        Returns a `list` object containing units that which name conatins the `filter` string
     '''
     logger.debug('Searching units related to %s' % filter)
     response = session.get(

@@ -9,6 +9,8 @@ import logging,json
 logger = logging.getLogger('InviteCode')
 def ParseInviteCode(inviteCode) -> dict:
     '''
+        # 输入邀请码
+
         Requires user to be logged in beforehand
 
         Loads the specified course as a single `dict` item containing
@@ -39,8 +41,13 @@ def ParseInviteCode(inviteCode) -> dict:
 
 def JoinByInviteCode(courseId,classId) -> dict:
     '''
+        # 邀请码加入
+        
         Requires user to be logged in beforehand
-        Loads the specified course as a single `dict` item
+
+        Joins the course via `courseId` & `classId`
+
+        which you can get via `ParseInviteCode`
     '''
     logger.debug('Joining invite code %s' % courseId)
     response = session.get(

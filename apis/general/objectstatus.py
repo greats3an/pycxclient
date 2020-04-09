@@ -10,6 +10,12 @@ logger = logging.getLogger('ObjectStatus')
 def GetObjectStatus(objectid) -> dict:
     '''
         Returns a `dict` object contating infomations on this object
+
+        ## objectid
+
+        The `objectid` to the selected media object,which can be fecthed via
+
+        `mooclearning.classtasks`
     '''
     logger.debug('Getting object status of object %s' % objectid)
     response = session.get(

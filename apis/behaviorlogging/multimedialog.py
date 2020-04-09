@@ -39,7 +39,22 @@ def _GenerateEnc(clazzId, jobid, objectId, currentTimeSec, totalTimeSec,uid='') 
 
 def MultimediaLog(reportUrl,playtime,duration,dtoken,clazzId,objectId,otherInfo,jobid,isdrag=0,view='pc',dtype='Video') -> str:
     '''
-        Log about your video watching duration
+        Fake `video-js-ext.js` report function to change the watched duration of a `video` element
+
+        # To fake watching:
+
+        see `main.py`'s `设置观看时长` for more info,all in all,you SHOULD really also fake the playback reqeust
+
+        ## reportUrl,dtoken,clazzId,objectId,otherInfo,jobid
+        
+        All of them can be fetched via `general.objectstatus.GetObjectStatus`
+
+        ## playtime,duration,isdrag=0,view='pc',dtype='Video'
+
+        The played time,the total duarion (which can be fetched via `general.objectstatus.GetObjectStatus` or use `atom` module to get persise value)
+
+        The playback status (where 0=playing,2=CHEATED,4=played-to-the-end),viewing platform and media type (do not modify those)
+
     '''
     logger.debug('Logging MultimediaLog with played time of %s (drag=%s)' % (playtime,isdrag))
     enc = _GenerateEnc(clazzId,jobid,objectId,playtime,duration,session.cookies.get('_uid'))

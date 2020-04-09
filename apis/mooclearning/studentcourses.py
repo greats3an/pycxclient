@@ -9,8 +9,11 @@ import logging
 logger = logging.getLogger('StudentCourses')
 def LoadCourses() -> list:
     '''
+        # 我学的课
+
         Requires user to be logged in beforehand
-        Loads all courses with `bs4`,retruns them in a `list` of `dict`
+
+        Loads all courses of the current-logged-in user
     '''
     logger.debug('Loading all courses of user %s' % session.cookies.get('uname'))
     response = session.get(

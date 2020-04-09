@@ -9,8 +9,15 @@ import logging
 logger = logging.getLogger('CourseClasses')
 def LoadClasses(course_url) -> dict:
     '''
+        # 课时列表
+
         Requires user to be logged in beforehand
-        Loads all tasks in courses with bs4
+
+        Loads all classes in course with BeautifulSoup
+
+        ## course_url
+
+        The url to the course,you may get this via `mooclearning.studentcourses`
     '''
     logger.debug('Loading all classes of course %s' % course_url)    
     response = session.get(
@@ -18,15 +25,15 @@ def LoadClasses(course_url) -> dict:
     )
     soup = BeautifulSoup(response.text, 'lxml')
     timeline = soup.find('div', {'class': 'timeline'})
-    tasks = {}
+    classes = {}
     for units in timeline.find_all('div', {'class': 'units'}):
         title = units.find('h2').text.replace(
             '\n', ' ').replace('\t', '').strip()
-        tasks[title] = []
+        classes[title] = []
         for subunits in units.find_all('h3',{'class':'clearfix'}):
             chapter = subunits.find('span', {'class': 'chapterNumber'})
             article = subunits.find('span', {'class': 'articlename'})
-            tasks[title].append({
+            classes[title].append({
                 'chapter': chapter.text,
                 'url': 'https://mooc1-1.chaoxing.com' + article.find('a').attrs['href'],
                 'knowledge_url': ''.join([
@@ -39,4 +46,4 @@ def LoadClasses(course_url) -> dict:
                 'title': article.find('a').attrs['title']
             })
 
-    return tasks
+    return classes

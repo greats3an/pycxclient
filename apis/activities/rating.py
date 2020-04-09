@@ -13,6 +13,8 @@ logger = logging.getLogger('Rating')
 
 def RateDetail(rate_url) -> dict:
     '''
+        # 评分详情
+
         Parses HTML info a dict object containing rate info
     '''
     logger.debug('Loading Rate info')
@@ -48,6 +50,8 @@ def RateDetail(rate_url) -> dict:
 
 def Rate(rate_url,content,score) -> dict:
     '''
+        # 评分
+        
         Perform rating
     '''
     logger.debug('Rating %s ' % rate_url)

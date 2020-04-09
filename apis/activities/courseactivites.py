@@ -26,6 +26,8 @@ def _url_appendices(activeId, appType,puid,courseId,classId,fid):
 
 def GetCourseActivites(course_url) -> dict:
     '''
+        # 任务、活动
+        
         Returns a `dict` object contating infomations of the operation
     '''
     logger.debug('Getting all activites of %s' % course_url)

@@ -11,7 +11,13 @@ logger = logging.getLogger('ClassTasks')
 
 def LoadClassInfo(knowledgeUrl) -> dict:
     '''
+        # 课时任务点
+        
         Returns a `dict` object contating infomations on its args
+
+        ## knowledgeUrl
+
+        The url to the "Knowledge Card",which you can get throgh `mooclearning.courseclasses`
     '''
     logger.debug('Loading KnowledgeArgs (mArg) of %s' % knowledgeUrl)
     response = session.get(

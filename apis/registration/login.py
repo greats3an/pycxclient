@@ -10,7 +10,9 @@ import logging
 logger = logging.getLogger('Login')
 def NormalLogin(username, password) -> dict:
     '''
-        This method DOES NOT require capthca verification
+        # 卡密登录
+        
+        Does not require any captcha to be solved
 
         Returns a `dict` object containing a url which you should be shortly redirected to
 
@@ -33,11 +35,15 @@ def NormalLogin(username, password) -> dict:
 
 def UnitLogin(unit_code,username, password, captcha_code) -> dict:
     '''
-        ⚠️Requires one kind of `capcha` has already been defeated before use
+        # 单位登录
+
+        Requires `captchas.logincaptcha` to be solved first to get us `captcha_code`
 
         Returns a `dict` object containing a url which you should be shortly redirected to
 
-        Which will also set a bunch of cookies
+        ## unit_code
+
+        Fecthable via `registration.serachunits`
     '''
     data = {
         'fid': unit_code,

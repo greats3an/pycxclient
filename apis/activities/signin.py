@@ -12,15 +12,9 @@ import logging
 logger = logging.getLogger('Singin')
 def NormalSingin(singin_url) -> str:
     '''
-        For 签到、手势签到
+        # 签到、手势签到
 
         Returns a string suggesting whether the signin has succeeded or not
-
-        Here's a note: Despite there are many kinds of signin methods
-
-        The verification never happens on the backend,and once
-
-        the frontend verifcation passed,the URL will always be the one below
 
         ...this only works on these two singins
     '''
