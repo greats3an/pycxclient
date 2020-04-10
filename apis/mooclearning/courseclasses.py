@@ -33,12 +33,14 @@ def LoadClasses(course_url) -> dict:
         for subunits in units.find_all('h3',{'class':'clearfix'}):
             chapter = subunits.find('span', {'class': 'chapterNumber'})
             article = subunits.find('span', {'class': 'articlename'})
+            href = article.find('a')
+            href = href.attrs['href'] if 'href' in href.attrs.keys() else ''
             classes[title].append({
                 'chapter': chapter.text,
-                'url': 'https://mooc1-1.chaoxing.com' + article.find('a').attrs['href'],
+                'url': 'https://mooc1-1.chaoxing.com' + href,
                 'knowledge_url': ''.join([
                     'https://mooc1-1.chaoxing.com/knowledge/cards?',
-                    article.find('a').attrs['href']
+                    href
                         .replace('/mycourse/studentstudy?', '')
                         .replace('chapterId', 'knowledgeid')
                         .replace('courseId','courseid')
