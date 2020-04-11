@@ -32,11 +32,15 @@ def ParseInviteCode(inviteCode) -> dict:
         'msg':blankTips.text if blankTips else '',
         'title':infobox.find('h3').text if not blankTips else '',
         'teacher':infobox.find('p').text if not blankTips else '',
-        'cover':infobox.find('img').attrs['src'] if not blankTips else '',
-        'courseId':soup.find('input',{'name':'courseId'}).attrs['value'] if not blankTips else 0,
-        'classId':soup.find('input',{'name':'classId'}).attrs['value'] if not blankTips else 0,
-        'userId':soup.find('input',{'name':'userId'}).attrs['value'] if not blankTips else 0,
-    }
+        'cover':infobox.find('img') if not blankTips else None,
+        'courseId':soup.find('input',{'name':'courseId'}) if not blankTips else None,
+        'classId':soup.find('input',{'name':'classId'}) if not blankTips else None,
+        'userId':soup.find('input',{'name':'userId'}) if not blankTips else None,
+    }    
+    data['cover'] = data['cover'].attrs['src'] if data['cover'] else ''
+    data['courseId'] = data['courseId'].attrs['value'] if data['courseId'] else '0'
+    data['classId'] = data['classId'].attrs['value'] if data['classId'] else '0'
+    data['userId'] = data['userId'].attrs['value'] if data['userId'] else '0'
     return data
 
 def JoinByInviteCode(courseId,classId) -> dict:
